@@ -1,0 +1,2260 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% tex.macro.file{
+%     nome              = easyTeX.sty,
+%     versione          = 7.21
+%     revisione interna = 02h
+%     data creazione    = 17/GIU/1996,
+%     ultima revisione  = 27/GIU/1999,
+%     tipo di file      = multilingual plain TeX,
+%     autore            = Davide MADRISAN,
+%     contenuto         = Macro documentate per la scrittura della Tesi di Laurea,
+%                         delle Sottotesi e dei rispettivi lucidi.
+% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% by MDTeX!96!98 %%%
+
+% (0) %%% NOTE ALL'USO ED ALL'IMPLEMENTAZIONE delle macro %%%%%%%%%%%%%%%%%%%%%%%%%%
+% Per poter utilizzare queste macro occorrono i seguenti file ausiliari:
+%   - easyTeX.ini    (file per la creazione del formato easyTeX)
+%   - condensed.fon  (file con specifiche supplementari riguardo ai font)
+%   - expanded.fon   (file con specifiche supplementari riguardo ai font)
+%   - normal.fon     (file con specifiche supplementari riguardo ai font)
+%   - ithyph.tex     (impostazioni e pattern di sillabazione per l'italiano)
+%   - unito.bmp      (logo dell'universita', utilizzata dalla macro "\cover")
+%
+% Procedura di inizializzazione (INITeX):
+%   - Copiare i file
+%       easyTeX.ini, easyTeX.tex, condensed.fon, expanded.fon, normal.fon, 
+%       ithyph.tex,
+%     nella directory: "PCTeX32\TeXinput",
+%   - Scegliere nel menu' Typeset la voce INITeX...,
+%   - Eseguire la procedura "INITeX" con le opzioni seguenti
+%       Macros...............  Other
+%       Macros file name.....  easyTeX.ini
+%       Path to input files..  [*]
+%       Path to tfm files....  [*]
+%     dove [*] sta al posto della stringa che comparirebbe se si fosse selezionato
+%     Macros: Plain TeX,
+%   - Verra' creato il file di formato easyTeX. Selezionarlo.
+%
+% Utilizzo alternativo del file di macro easyTeX.sty:
+%   - Inserire all'inizio del proprio documento il comando
+%       \input easyTeX.sty
+%   - Compilare il proprio documento con il formato MLPLAIN o MLAMSPLA.
+%     Nota importante. Perche' tutto funzioni correttamente e' necessario che questi
+%     due formati multilingua siano stati inizializzati con le impostazioni relative
+%     alla lingua inglese, francese ed italiana. Controllare il file masthyph.tex.
+%     In particolare, se non fossero presenti le impostazioni relative alla lingua
+%     italiana, copiare il file ithyph.tex nella directory "PCTeX32\TeXinput", 
+%     inserire alla fine del file masthyph l'istruzione
+%       \input ithyph
+%     e rieseguire la procedura di INITeX per il formato desiderato (cioe' MLPLAIN
+%     e/o MLAMSPLA).
+%
+% Queste macro possono essere classificate in due gruppi:
+%    (1) macro pubbliche (o esterne),
+%    (2) macro private (o di uso esclusivamente interno a questo file).
+% In particolare, appartengono al secondo gruppo i nomi dei font utilizzati,
+% i contatori automatici e le macro di uso interno.
+% Tutti questi oggetti privati hanno nel loro nome almeno un punto esclamativo (!)
+% che all'interno di questo file ha come codice di categoria 11 (TeXBook, cap.7).
+% Poiche' nell'uso normale di easyTeX il carattere "!" ha codice 12, queste macro
+% non sono (facilmente) accessibili e modificabili all'esterno di questo file.
+% Si tratta di un ottimo meccanismo di protezione da ridefinizioni accidentali.
+% Le macro sono organizzate in "gruppi a tema" per facilitarne le ricerca.
+% Il gruppo n1-esimo e' caratterizzato dal simbolo "(n1)".
+% Inoltre ogni gruppo ha generalmente uno o piu' sottogruppi, caratterizzati da
+% nuovi numeri nn1, nn2,... con simbolo ".(nn1)", ".(nn2)".
+% Analogamente si avra' "..(nn1)", per indicare un sottogruppo di un sottogruppo.
+%
+% Macro non ancora pienamente sviluppate ed errori conosciuti:
+%   - la scrittura dell'indice analitico e' appena abbozzata,
+%
+% Ed a proposito di errori...
+% un ringraziamento particolare va a Federico Borio, il mio $\beta$-tester di
+% fiducia che con l'utilizzo intensivo di questo pacchetto di macro ha contribuito
+% in maniera rilevante a scovare i miei errori di programmazione ed a stimolarmi
+% verso il miglioramento e la semplificazione d'uso di molte di queste macro.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\catcode`! = 11                                % privatizzazione delle macro interne
+
+% (1) %%% MACRO DI UTILITA' GENERALE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  .(1) %%% AMENITA' VARIE (logo, formato, ecc.) e INIZIALIZZAZIONI %%%%%%%%%%%%%%%%
+\message{Macros for easyTeX-logo, version and format...}
+\let\exfmtname = \fmtname  % serve a verificare se c'e' errore ambiente compilazione
+\def\fmtname{easyTeX}                                             % nome del formato
+\def\fmtversion{7.21.02h}                           % numero di versione delle macro
+\def\macro!filename{easyTeX.sty}                      % nome di questo file di macro
+\def\MDTeX{%                                                           % MDTeX logos
+    \kern-\mathsurround{$\cal M$}\kern-.35em\lower.5ex\hbox{$\cal D$}%
+    \kern.03em\hbox{-}\TeX}
+\def\easyTeX{{\sl e\lower.4ex\hbox{a}\kern.6pt s\lower.4ex\hbox{y}}\kern-.7pt\TeX}
+\def\wlog{}
+\def\!wlog{\immediate\write16}
+\catcode`@ = 11
+\def\alloc@#1#2#3#4#5{%
+    \global\advance\count1#1by\@ne
+    \ch@ck#1#4#2%               % controlla che ci sia spazio sufficiente in memoria 
+    \allocationnumber = \count1#1%
+    \global#3#5 = \allocationnumber}
+\def\!MDlogo{%
+    \!wlog{}
+    \!wlog{Multilingual \fmtname, version \fmtversion}
+    \!wlog{by Madrisan Davide.}
+    \!wlog{Email: madrisan@dm.unito.it (suppressed)}
+    \!wlog{}
+    \!wlog{Have a nice time with \fmtname !}
+    \!wlog{}}\!MDlogo
+\catcode`@ = 12
+%
+%  .(2) %%% \everyjob con PROTEZIONE da easyTeX-utenti indesiderati %%%%%%%%%%%%%%%%
+\font\!tencmssdc = cmssdc10 at 32pt
+\font\!bigmath = cmmi12 at 32pt
+\def\msg!I!cannot!run{%
+    \global\nopagenumbers \advance\hoffset by -4mm
+    \vglue 1.4true cm
+    \vbox{%
+        \baselineskip = 46true pt
+        \leftskip = 0pt plus 1fill\rightskip = \leftskip
+        \noindent\!tencmssdc Oops, `easy\TeX' emergency stop!\break
+        ---\ unauthorized user detected\ ---\break
+        \vskip -50pt\noindent\break
+        Select a different typesetting format\break
+        (and send your flames to /dev/null)\break
+        \vskip-25pt\hrule height4pt}
+    \vfill\eject\fi\end}          % "\fi" per chiudere l'istruzione condizionale (*)
+\everyjob{%
+    \!MDlogo
+    \pageno = 1   % inizio da pagina 1 per default (se c'e' l'indice invece da i=-1)
+    \!testfilexistance{chk}                                       % evil genius tip!
+    \if!filexists\else\msg!I!cannot!run\fi                                     % (*)
+    \tracingstats = 1                                % situazione di uso memoria TeX
+    \!setTime}                                   % setta l'ora ed il giorno corrente
+\globaldefs = 0                         % distinzione tra variabili locali e globali
+%
+%  .(3) %%% ridefinizione di \bye con FORMATO + DATA ed ORA compilazione %%%%%%%%%%%
+\outer\def\bye{%
+    \font\easyfont = cmsy7 at 5pt%
+    \par\vfill\ \vfill%
+    \headline = {\hfill} \footline = {\hfill}
+    \rightline{%
+        \sevenrm%
+        \ifx\!language\!italian%
+            Documento creato con il formato
+            {\easyfont E\kern-1pt\lower.4ex\hbox{A}S\lower.4ex\hbox{Y}}\TeX{}
+            il \today, ore \thetime%
+        \else\ifx\!language\!french%
+            Document cr\'ee avec
+            {\easyfont E\kern-1pt\lower.4ex\hbox{A}S\lower.4ex\hbox{Y}}\TeX{}
+            le \today, h. \thetime%
+        \else
+            Run through
+            {\easyfont E\kern-1pt\lower.4ex\hbox{A}S\lower.4ex\hbox{Y}}\TeX{}
+            on \today{} at \thetime\fi\fi}%
+    \supereject\end}
+%
+%  .(4) %%% macro per la GESTIONE degli ERRORI %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\message{Macros and definitions for \fmtname\space errors...}
+\newlinechar = `\^^J
+\def\!hmsg{%
+    Premere h <invio> per un aiuto immediato oppure x <invio>^^J%
+    per interrompere la compilazione a questo punto.^^J%
+    Se necessario cercare ulteriori informazioni nel file '\macro!filename'.^^J}
+\def\!MDdeferrstr#1{^^J!OOPS... [\fmtname] -- #1 !^^J\!hmsg}
+%
+%    ..(1) %%% errore e controllo dell'AMBIENTE di COMPILAZIONE ....................
+% Nota tecnica. Viene generato un errore se il formato non e' plain TeX o AMSTeX.
+% Riguarda solo l'uso di queste macro mediante il comando "\input easyTeX.sty" e non
+% interviene (naturalmente) se il formato selezionato e' "easyTeX".
+\newhelp\msg!fmterr{%
+    Queste macro richiedono il formato multilingual plain TeX oppure^^J
+    multilingual AMSTeX oppure il formato multilingual MDTeX (easyTeX).^^J
+    In particolare non sono LaTeX-compatibili.^^J
+    Se il formato selezionato e' easyTeX, elimina ogni istruzione^^J
+    "\string\input\space\macro!filename" dai file in uso.^^J
+    Premi x <invio> e seleziona la giusta estensione del linguaggio TeX^^J
+    prima di provare a ricompilare.^^J}
+\def\!fmterr{
+    \errhelp = \msg!fmterr
+    \errmessage{\!MDdeferrstr{L'ambiente di compilazione non e' valido}}}
+\def\plainTeXfmt{plain}
+\def\AMSTeXfmt{AmS-TeX}
+\def\shouldbefmt{plain}
+\ifx\shouldbefmt\exfmtname
+\else                            % errore se non e' il formato "plain TeX o "AMSTeX"
+    \def\shouldbefmt{AmS-TeX}
+    \ifx\shouldbefmt\exfmtname\else\!fmterr\fi\fi
+%
+%    ..(2) %%% errori nei COMANDI "\set" ...........................................
+\newhelp\msg!setcommanderr{%
+    Il comando \string\set\space si puo' solo applicare alle variabili globali 
+    di formato^^J
+    e di stampa: 'pagestyle', 'parstyle', 'printing' e 'language'.^^J}
+\def\!setcommanderr{
+    \errhelp = \msg!setcommanderr
+    \errmessage{\!MDdeferrstr{Opzione non valida per \string\set}}}
+%
+%       ...(1) %%% errore in "\set pagestyle .......................................
+\newhelp\msg!pagestylerr{%
+    L'argomento assegnato alla variabile di formato 'pagestyle' non e' valido.^^J
+    Gli argomenti validi sono 'condensed', 'normal', 'expanded', 'slide'.^^J}
+\def\!setpagestylerr{
+    \errhelp = \msg!setpagestylerr
+    \errmessage{%
+        \!MDdeferrstr{Argomento non valido per \string\set\space pagestyle}}}
+%
+%       ...(2) %%% errore in "\set parstyle ........................................
+\newhelp\msg!setparstylerr{%
+    L'argomento assegnato alla variabile di formato 'parstyle' non e' valido.^^J
+    Gli argomenti validi sono 'classical' ed 'alternative'.^^J}
+\def\!setparstylerr{
+    \errhelp = \msg!setparstylerr
+    \errmessage{\!MDdeferrstr{Argomento non valido per \string\set\space parstyle}}}
+%
+%       ...(3) %%% errore in "\set printing ........................................
+\newhelp\msg!setprintingerr{%
+    L'argomento assegnato alla variabile di formato 'printing' non e' valido.^^J
+    Gli argomenti validi sono 'oneside' e 'bothsides'.^^J}
+\def\!setprintingerr{
+    \errhelp = \msg!setprintingerr
+    \errmessage{\!MDdeferrstr{Argomento non valido per \string\set\space printing}}}
+%
+%       ...(4) %%% errori in "\set language" .......................................
+\newhelp\msg!setlanguagerr{%
+    L'argomento passato al comando '\string\set language' non e' valido.^^J
+    Gli argomenti disponibili sono 'italian', 'french' ed 'english'.^^J}
+\def\!setlanguagerr{
+    \errhelp = \msg!setlanguagerr
+    \errmessage{\!MDdeferrstr{Argomento non valido per \string\set\space language}}}
+\newhelp\msg!hypherr{%
+    Le impostazioni multilingua non sono corrette per almeno una lingua.^^J
+    L'errore dovrebbe riguardare la lingua italiana. In questo caso, copiare il^^J
+    file 'ithyph.tex' nella directory 'texinput' di PCTeX32, inserire la stringa^^J
+    \string\input\space ithyph^^J
+    alla fine del file 'masthyph.tex' e (ri)eseguire la procedura 'INITeX'^^J
+    scegliendo il formato Plain TeX multilingua oppure AMSTeX multilingua.^^J
+    Quindi ricompilare il documento dopo aver selezionato uno di questi formati.^^J}
+\def\!hypherr{%
+    \errhelp = \msg!hypherr
+    \errmessage{\!MDdeferrstr{Impostazioni multilingua non disponibili}}}
+%
+%    ..(3) %%% errore in "\make" ...................................................
+\newhelp\msg!makerr{%
+    L'argomento del comando '\string\make' non e' valido.^^J
+    Gli unici argomenti validi sono 'contents' ed 'index'.^^J}
+\def\!makerr{
+    \errhelp = \msg!makerr
+    \errmessage{\!MDdeferrstr{Opzione non valida in \string\make}}}
+%
+%    ..(4) %%% errore di ETICHETTA INDEFINITA (riferimenti incrociati) .............
+\newhelp\msg!fooerr{%
+    L'etichetta utilizzata come riferimento incrociato non esiste.^^J
+    Se non si tratta di un errore di battitura, l'oggetto indicato^^J
+    dall'etichetta o e' stato eliminato o e' definito dopo questo punto.^^J
+    Se si sta utilizzando il formato '\string\slide', tener anche presente che^^J
+    questo formato pone restrizioni all'uso delle etichette.^^J}
+\def\!fooerr{
+    \errhelp = \msg!fooerr
+    \errmessage{\!MDdeferrstr{Etichetta indefinita}}}
+%
+%    ..(5) %%% errore di ETICHETTA GIA' DEFINITA (riferimenti incrociati) ..........
+\newhelp\msg!fooexisterr{%
+    L'etichetta utilizzata come riferimento incrociato non e' disponibile.^^J
+    Esiste cioe' un oggetto gia' associato a tale stringa. Potrebbe esistere^^J
+    gia' una etichetta con lo stesso nome oppure si tratta di una primitiva^^J
+    o di una macro del linguaggio stesso.^^J}
+\def\!fooexisterr{
+    \errhelp = \msg!fooexisterr
+    \errmessage{\!MDdeferrstr{Etichetta gia' definita}}}
+%
+%    ..(6) %%% errore di \endof{...} non definito ..................................
+\newhelp\msg!endoferr{%
+    L'ambiente di cui si richiede la chiusura con \string\endof\string{...\string}
+    non esiste.^^J
+    Controllare se si tratta di un semplice errore di battitura.^^J}
+\def\!endoferr{
+    \errhelp = \msg!endoferr
+    \errmessage{\!MDdeferrstr{Ambiente non definito}}}
+%
+%    ..(7) %%% errore d'uso di FOOTNOTE ............................................
+\newhelp\msg!footnoterr{%
+    Non e' consentito l'uso delle note a pie' pagina nel formato slide.^^J}
+\def\!footnoterr{
+    \errhelp = \msg!footnoterr
+    \errmessage{\!MDdeferrstr{Nota a pie' pagina inaspettata}}}
+%
+%    ..(8) %%% errore d'uso di USEPACKAGE ..........................................
+\newhelp\msg!usepackagerr{%
+    Il file di macro cui fa riferimento l'istruzione \string\usepackage\space
+    non esiste.^^J%
+    NB. Il file e' assolutamente necessario. Gli errori che seguono saranno^^J%
+    in parte causati dalla mancata lettura delle definizioni in esso contenute.}
+\def\!usepackagerr{
+    \errhelp = \msg!usepackagerr
+    \errmessage{\!MDdeferrstr{File di macro non trovato}}}
+%
+%  .(5) %%% MACRO DI UTILITA' GENERALE e MACRO dei processi di parsing %%%%%%%%%%%%%
+\def\!gobble#1{}                                              % elimina un argomento
+\def\!empty{}
+\def\!ifempty#1#2#3{%                    % \!ifempty{ARG}{TRUE ACTION}{FALSE ACTION}
+    \edef\!emptyarg{#1}\ifx\!emptyarg\!empty#2\else#3\fi}
+\def\!ifundefined#1{%          % \!ifundefined{ARG} TRUE ACTION\else FALSE ACTION\fi
+    \expandafter\ifx\csname#1\endcsname\relax}
+\def\!ifstrcmp#1#2{%       % \!ifstrcmp{str1}{str2} TRUE ACTION\else FALSE ACTION\fi
+    \def\!first{#1}\def\!second{#2}\ifx\!first\!second\relax}
+% Nota tecnica. "\!testfilexistance" controlla se il file \jobname.#1 e' vuoto e
+% predispone "\if!filexists" di conseguenza.
+% Non e' necessario posporre un token di tipo spazio al nome del file nell'argomento
+% in quanto la macro genera lo spazio necessario.
+\newif\if!filexists\!filexistsfalse
+\def\!testfilexistance#1{%
+    \immediate\openin0 = \jobname.#1\space
+    \ifeof 0\global\!filexistsfalse\else\global\!filexiststrue\fi
+    \immediate\closein0}
+%
+%    ..(1) %%% MACRO DI PARSING usate negli OGGETTI di TIPO TEOREMA ................
+\def\\{\!skipspacetestagain}
+\expandafter\def\\ {\futurelet\!nextchar\!testnext} 
+\def\\{\let\!spacetoken= } \\                         % "\spacetoken" = token spazio
+\def\!ifnextchar#1#2#3{%        % \!ifnextchar{CHARACTER}{TRUE ACTION}{FALSE ACTION}
+    \let\!testchar = #1\def\!first{#2}\def\!second{#3}
+    \futurelet\!nextchar\!testnext}
+\def\!testnext{%
+    \ifx\!nextchar\!spacetoken                    % salta i caratteri di tipo spazio
+        \let\!next = \!skipspacetestagain
+    \else
+        \ifx\!nextchar\!testchar\let\!next = \!first
+        \else\let\!next = \!second\fi\fi\!next}
+%
+%    ..(2) %%% MACRO DI PARSING usate nelle FORMULE MATEMATICHE (da LaTeX) .........
+\def\!nnil{\!nil}
+\def\!fornoop#1\!!#2#3{}
+\def\!tfor#1:=#2\do#3{%                              % \!tfor NAME := LIST\do {BODY}
+    \edef\!fortemp{#2}\ifx\!fortemp\!empty\else\!tforloop#2\!nil\!nil\!!#1{#3}\fi}
+\def\!tforloop#1#2\!!#3#4{%
+    \def#3{#1}%
+    \ifx #3\!nnil
+        \let\!nextwhile=\!fornoop
+    \else
+        #4\relax\let\!nextwhile=\!tforloop\fi
+    \!nextwhile#2\!!#3{#4}}
+\def\!etfor#1:=#2\do#3{%                            % \!etfor NAME := LIST\do {BODY}
+    \def\!!tfor{\!tfor#1:=}\edef\!!!tfor{#2}\expandafter\!!tfor\!!!tfor\do{#3}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (2) %%% IMPOSTAZIONI CONDIZIONALI GLOBALI (modificabili) %%%%%%%%%%%%%%%%%%%%%%%%%
+\message{Macro for setting document style...}
+%
+% Nota. Come settare le impostazioni globali di stile, lingua e stampa.
+% I comandi della famiglia \set vanno inseriti all'inizio del file della tesi.
+%   1. Dimensioni pagina e caratteri.
+%      E' possibile scegliere tra quattro modalita' diverse scrivendo:
+%          "\set pagestyle to condensed"
+%          "\set pagestyle to normal"
+%          "\set pagestyle to expanded"
+%          "\set pagestyle to slide"
+%      Nel primo caso si avra' la modalita' condensata (formato `tascabile'),
+%      nel secondo e terzo caso si ha un'impaginazione per fogli A4, dove l'ultimo
+%      stile ha caratteri e spazi orizzontali e verticali di dimensione espansa
+%      rispetto a quelli utilizzati nel secondo stile.
+%      Infine l'ultimo stile formatta il testo per la stampa dei lucidi.
+%   2. Formattazione dei paragrafi.
+%      E' possibile scegliere tra due stili diversi mediante le istruzioni:
+%          "\set parstyle to classical"
+%          "\set parstyle to alternative"
+%      Con l'opzione "classical" si ha la formattazione:
+%          grassetto (nome paragrafi) + corsivo italico (corpo del par.),
+%      con "alternative" invece si ha:
+%          \indent + maiuscoletto (nome par.) + roman (corpo del par.)
+%   3. Modalita' di stampa.
+%      E' possibile scegliere tra due diverse modalita' di stampa mediante:
+%          "\set printing to oneside"
+%          "\set printing to bothsides".
+%      per avere rispettivamente l'impaginazione solo fronte e fronte retro.
+%   4. Scelta della lingua.
+%      E' possibile scegliere tra tre diverse lingue mediante:
+%          "\set language to italian"
+%          "\set language to french"
+%          "\set language to english".
+%      Si veda anche il grupppo (5) di macro.
+%
+\def\usepackage[#1]{       % macro introdotta per motivi di risparmio di memoria TeX
+    \immediate\openin0 = #1\space       % controllo dell'esistenza del file di macro
+    \ifeof 0\global\!filexistsfalse\else\global\!filexiststrue\fi
+    \immediate\closein0
+    \if!filexists\input #1                  % se il file esiste lo carica in memoria
+    \else\!usepackagerr\fi}                            % altrimenti segnala l'errore
+\def\set #1 to #2 {%
+    \def\!first{#1}\def\!second{#2}
+    \def\!pagestyle{pagestyle}\def\!parstyle{parstyle}\def\!printing{printing}
+    \def\!language{language}
+    \ifx\!first\!pagestyle\!setpagestyle{#2}                        % \set pagestyle
+    \else
+        \ifx\!first\!parstyle\!setparstyle{#2}                      % \set parstyle
+        \else
+            \ifx\!first\!printing\!setprinting{#2}                  % \set printing
+            \else
+                \ifx\!first\!language\!setlanguage{#2}              % \set language
+                \else\!setcommanderr\fi\fi\fi\fi}
+%
+%  .(1) %%% FORMATTAZIONE GLOBALE del testo ........................................
+\newif\if!condensed\newif\if!normal\newif\if!expanded\newif\if!slide
+\!condensedfalse\!normaltrue\!expandedfalse\!slidefalse            % default: normal
+\def\!setpagestyle#1{%
+    \!condensedfalse\!normalfalse\!expandedfalse\!slidefalse
+    \def\!!condensed{condensed}\def\!!normal{normal}\def\!!expanded{expanded}
+    \def\!!slide{slide}\def\!option{#1}
+    \ifx\!option\!!condensed                          % "set pagestyle to condensed"
+        \!condensedtrue
+        \usepackage[condensed.fnt]                   % file con definizioni dei font
+    \else
+        \ifx\!option\!!normal                            % "set pagestyle to normal"
+            \!normaltrue
+            \usepackage[normal.fnt]
+        \else
+            \ifx\!option\!!expanded                    % "set pagestyle to expanded"
+                \!expandedtrue
+                \usepackage[expanded.fnt]
+            \else
+                \ifx\!option\!!slide              % comando "set pagestyle to slide"
+                    \!slidetrue
+                    \usepackage[slide.fnt]
+                    \global\bigskipamount = 10pt
+                    % \itemlist ...[comandi \itemi, \itemii]... \endof{itemlist}
+                    \gdef\itemlist{\bgroup\parindent = .8cm} 
+                    \gdef\end!itemlist{\egroup}
+                    \gdef\itemi{\item{\squarept}}
+                    \gdef\itemii{\itemitem{$-$}}
+                \else\!setpagestylerr\fi\fi\fi\fi               % opzione non valida
+    \the\!magnification\the\!globalstyle\the\!fonts\!tenpoint     % setta var. stile
+    \!wlog{The value of setpagestyle is : %
+        \if!condensed 'condensed'\fi\if!normal 'normal'\fi
+        \if!expanded 'expanded'\fi\if!slide 'slide'\fi}}
+%
+%  .(2) %%% FORMATTAZIONE dei PARAGRAFI (tipo classico o `benentiano') .............
+\newif\if!classical\!classicaltrue                              % default: classical
+\def\!setparstyle#1{%
+    \def\!classical{classical}\def\!alternative{alternative}\def\!option{#1}
+    \ifx\!option\!classical\!classicaltrue            % "\set parstyle to classical"
+    \else
+        \ifx\!option\!alternative\!classicalfalse   % "\set parstyle to alternative"
+        \else\!setparstylerr\fi\fi                              % opzione non valida
+    \!wlog{The value of setparstyle is: %
+        \if!classical 'classical'\else 'alternative'\fi}}
+%
+%  .(3) %%% stampa FRONTE RETRO o SOLO FRONTE ......................................
+\newif\if!bothsides\!bothsidesfalse                           % default: solo fronte
+\def\!setprinting#1{%
+    \def\!oneside{oneside} \def\!bothsides{bothsides}\def\!option{#1}
+    \ifx\!option\!oneside\global\!bothsidesfalse        % "\set printing to oneside"
+    \else
+        \ifx\!option\!bothsides\global\!bothsidestrue % "\set printing to bothsides"
+        \if!slide\global\!bothsidesfalse\fi     % formato slide soltanto solo fronte
+        \else\!setprintingerr\fi\fi                             % opzione non valida
+    \the\!globalstyle\the\!headfootline     % setta i giusti valori di impaginazione
+    \!wlog{The value of setprinting is: %
+        \if!bothsides 'bothsides'\else 'oneside'\fi}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (3) %%% creazione FILE ESTERNI (indice e indice analitico) %%%%%%%%%%%%%%%%%%%%%%%
+\message{Macros and declaration about contents and index...}
+%
+% Nota. Come creare i file di indice ed indice analitico.
+%   1. Per avere la creazione automatica del file di indice seguire le istruzioni:
+%      - Creare un file tesi.tex (o un qualsiasi altro nome) e scrivervi:
+%           \make{contents}    % crea il file indice della tesi
+%           \input chapter1    % capitolo 1 della tesi
+%           \input chapter2    % capitolo 1 della tesi
+%           [...restanti file capitolo...]
+%           \input biblio      % bibliografia
+%           \bye
+%      - Compilarlo. Verra' creato il file tesi.cnt (cioe' \jobname.cnt)
+%      - Sostituire la riga "\make{contents}" nel file "tesi.tex" con l'istruzione
+%           "\input tesi.cnt"
+%      - Ricompilare il file "tesi.tex"...
+%        ...ed ecco fatto. Compare la tesi preceduta dall'indice formattato!
+%
+%   2. Per avere la creazione automatica del file di indice analitico (abbozzato):
+%      - Inserire nel file tesi.tex l'istruzione:
+%           \make{index}
+%      - Usare nel testo, quando c'e' una parola che si vuole compaia nell'indice
+%        analitico, la macro "\toindex{Parola chiave}".
+%      - Compilare il file "tesi.tex". Verra' creato il file tesi.inx (\jobname.inx)
+%        contenente le parole associate al numero di pagina in cui si trovano.
+%
+\def\make #1 {%
+    \def\!arg{#1}\def\!!contents{contents}\def\!!index{index}
+    \ifx\!arg\!!contents\!makecontents                              % \make contents
+    \else\ifx\!arg\!!index\!makeindex\else\!makerr\fi\fi}              % \make index
+%
+%  .(1) %%% file esterno contenente l'INDICE (\jobname.cnt) ........................
+\newif\if!writingcontents\!writingcontentsfalse
+\newwrite\!contents
+\def\!makecontents{%       % avvia creazione dell'indice (solo se formato non slide)
+    \if!slide\else
+        \immediate\openout\!contents = \jobname.cnt%
+        \global\!writingcontentstrue%
+        \immediate\write\!contents{\string\contents}%
+        \immediate\write\!contents{}%
+        \immediate\write\!contents{%
+            \string\cntspcchapter\string{\!mlcontents\string}\string{\string\tenbs
+            \string{\string}i\string}}
+        \!wlog{File for contents: '\jobname.cnt'}\fi}
+%
+%  .(2) %%% file esterno contenente l'INDICE ANALITICO (\jobname.inx) ..............
+\newif\if!writingindex\!writingindexfalse
+\newwrite\!index
+\def\toindex#1{%
+    \if!slide\else\if!writingindex\immediate\write\!index{#1 \the\pageno}\fi\fi}%
+\def\!makeindex{%     % avvia creazione indice analitico (solo se formato non slide)
+    \if!slide\else
+        \openout\!index = \jobname.inx%
+        \global\!writingindextrue%
+        \!wlog{File for index: '\jobname.inx'}\fi}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (4) %%% IMPOSTAZIONI RELATIVE AI CARATTERI utilizzati %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\message{Fonts, families of fonts and definitions about fonts...}
+%
+%  .(1) %%% definizione delle famiglie di caratteri aggiuntive .....................
+\newfam\scfam                                               % famiglia smallcap font
+\newfam\ccfam                                               % vedi "\RR", "\CC", etc
+\newfam\sffam                                                  % famiglia sans serif
+\newfam\sfbfam                                       % famiglia sans serif grassetto
+\newfam\sfifam                                         % famiglia sans serif italico
+\newfam\msafam                                    % famiglia con font matematici ams
+\newskip\ttglue
+\newtoks\!fonts
+%
+%  .(2) %%% STILE MATEMATICO GRASSETTO CORSIVO (vettori e matrici) .................
+% Nota. Esempio d'uso: $\mbold{\omega(X},\cdot) = X_idq^i - X^idp_i$
+\def\mbold#1{\hbox{$\if!footnote\textfont1 = \ninebs\else\textfont1 = \tenbs\fi#1$}}
+%
+%  .(3) %%% caricamento dei font necessari per "\!ninepoint" e "\!tenpoint" ........
+\font\tenbs    = cmmib10
+\font\tensc    = cmcsc10 
+\font\tensf    = lcmss8  at 10pt % font di LaTex
+\font\tensb    = lcmssb8 at 10pt
+\font\tensi    = lcmssi8 at 10pt
+\font\tencc    = msbm10  \font\ninecc = msbm9
+\font\tensltt  = cmsltt10
+\font\tenmsa   = msam10
+\font\ninerm   = cmr9
+\font\ninei    = cmmi9
+\font\ninesy   = cmsy9
+\font\nineit   = cmti9
+\font\ninesl   = cmsl9
+\font\ninett   = cmtt9
+\font\ninebf   = cmbx9
+\font\ninebs   = cmmib9
+\font\ninesc   = cmcsc10 at 9pt % non c'e' il font cmcsc9
+\font\ninemsa  = msam9
+\font\eightsf  = lcmss8
+\font\sevenmsa = msam7
+\font\sixrm    = cmr6 
+\font\sixi     = cmmi6
+\font\sixsy    = cmsy6
+\font\sixbf    = cmbx6
+\font\sixmsa   = msam6
+\font\fivemsa  = msam5
+\skewchar\teni ='177\skewchar\ninei ='177\skewchar\seveni ='177
+\skewchar\sixi ='177\skewchar\fivei ='177
+\skewchar\tensy ='60\skewchar\ninesy ='60\skewchar\sevensy ='60
+\skewchar\sixsy ='60\skewchar\fivesy ='60
+\hyphenchar\ninett = -1
+\font\tenvtt = cmvtt10\font\ninevtt = cmvtt10 at 9pt % \tt non per listati programmi
+%
+%  .(4) %%% classi "\!tenpoint" e "\!ninepoint" ....................................
+\def\!tenpoint{%
+    % ridefinizioni affiche' a \rm,\sl,\it,\bf nel formato '\slide' corrispondano
+    % i giusti caratteri
+    \if!slide\let\tenrm = \tensf\let\tenit = \tensi\let\tensl = \tensi
+        \let\tenbf = \tensb\fi
+    \textfont0 = \tenrm\scriptfont0 = \sevenrm\scriptscriptfont0 = \fiverm%
+    \def\rm{\fam0\tenrm}%
+    \textfont1 = \teni \scriptfont1 = \seveni \scriptscriptfont1 = \fivei%
+    \def\mit{\fam1}%
+    \def\oldstyle{\fam1\teni}%
+    \textfont2 = \tensy\scriptfont2 = \sevensy\scriptscriptfont2 = \fivesy%
+    \def\cal{\fam2}%
+    \textfont3 = \tenex\scriptfont3 = \tenex\scriptscriptfont3 = \tenex%
+    \textfont\itfam = \tenit \def\it{\fam\itfam\tenit}%
+    \textfont\slfam = \tensl \def\sl{\fam\slfam\tensl}%
+    \textfont\ttfam = \tentt \def\tt{\fam\ttfam\tentt}%
+    \textfont\bffam = \tenbf \def\bf{\fam\bffam\tenbf}%
+    \def\sc{\fam\scfam\tensc}%                              % famiglia smallcap font
+        \textfont\scfam = \tensc%            % questa famiglia non ha apici e pedici
+    \def\cc{\fam\ccfam\tencc}% 
+        \textfont\ccfam = \tencc%
+    \def\sf{\fam\sffam\tensf}%                                 % famiglia sans serif
+        \textfont\sffam = \tensf%
+    \def\sfb{\fam\sfbfam\tensb}%                      % famiglia sans serif grasseto
+        \textfont\sfbfam = \tensb%
+    \def\sfi{\fam\sfifam\tensi}%                       % famiglia sans serif italico
+        \textfont\sfifam = \tensi%
+    \def\ams{\fam\msafam = \tenmsa}%
+        \textfont\msafam = \tenmsa%
+        \scriptfont\msafam = \sevenmsa \scriptscriptfont\msafam = \fivemsa%
+    \tt\ttglue = .5em plus.25em minus.15em%
+    \normalbaselineskip = 13pt%
+    \setbox\strutbox = \hbox{\vrule height8.5pt depth3.5pt width0pt}%
+    \normalbaselines\rm}      % font di default; "\sf" per slides, "\rm" per la tesi
+\def\!ninepoint{%
+    \textfont0 = \ninerm\scriptfont0 = \sixrm\scriptscriptfont0 = \fiverm%
+    \def\rm{\fam0\ninerm}%
+    \textfont1 = \ninei \scriptfont1 = \sixi \scriptscriptfont1 = \fivei%
+    \def\mit{\fam1}%
+    \def\oldstyle{\fam1\teni}%
+    \textfont2 = \ninesy\scriptfont2 = \sixsy\scriptscriptfont2 = \fivesy%
+    \def\cal{\fam2}%
+    \textfont3 = \tenex \scriptfont3 = \tenex\scriptscriptfont3 = \tenex%
+    \textfont\itfam = \nineit \def\it{\fam\itfam\nineit}%
+    \textfont\slfam = \ninesl \def\sl{\fam\slfam\ninesl}%
+    \textfont\ttfam = \ninett \def\tt{\fam\ttfam\ninett}%
+    \textfont\bffam = \ninebf \def\bf{\fam\bffam\ninebf}%
+    \def\sc{\fam\scfam\ninesc}%                             % famiglia smallcap font
+        \textfont\scfam = \ninesc%           % questa famiglia non ha apici e pedici
+    \def\cc{\fam\ccfam\ninecc}% 
+        \textfont\ccfam = \ninecc%
+    \def\ams{\fam\msafam = \ninemsa}%
+        \textfont\msafam = \ninemsa%
+        \scriptfont\msafam = \sixmsa \scriptscriptfont\msafam = \fivemsa%
+    \tt\ttglue = .5em plus.25em minus.15em%  
+    \normalbaselineskip = 11pt
+    \setbox\strutbox = \hbox{\vrule height8pt depth3pt width0pt}%
+    \normalbaselines\rm}                                     % font di default "\rm"
+\!tenpoint                                               % carattere 10pt di default
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (5) %%% IMPOSTAZIONI MULTILINGUA %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\message{Macros about supported languages (italian, french, english)...}
+%
+% Nota. Per settare la lingua predefinita nel documento usare uno dei comandi:
+%     \set language to italian 
+%     \set language to french
+%     \set language to english
+% A questo proposito vedere il gruppo (2) di macro.
+% Sono inoltre disponibili i comandi:
+%     "\ithyph", "\fhyph" e "\ehyph"
+% tramite i quali si selezionano le impostazioni ed i pattern di sillabazione 
+% relativi alle lingue rispettivamente italiana, francese ed inglese.
+% Richiedono il formato "easyTeX" o multilingual Plain TeX o multilingual AMS-TeX,
+% questi ultimi con l'aggiunta (!) delle impostazioni relative alla lingua italiana.
+% Questi tre comandi vanno usati all'interno di gruppi TeX {...}, in caso di inserti
+% in una lingua diversa da quella corrente.
+% E' presente una traduzione linguistica automatica per le voci "Capitolo",
+% "Appendice", "Dimostrazione", ecc. che ho inserito per spirito europeo.
+%
+% Promemoria. Sintassi di alcune parole italiane accentate:
+% anziché, caffé, cioé, è, né, nonché, perché, poiché, sé, tè.
+%
+\newcount\n!language\n!language = 1                       % default: lingua italiana
+\def\!italian{italian}\def\!french{french}\def\!english{english}
+\def\!ldef#1[#2,#3,#4]{%
+    \ifcase\n!language\or\gdef#1{#2}\or\gdef#1{#3}\or\gdef#1{#4}\fi}
+\def\!setmlstrings{
+    \!ldef\!mlchapter[Capitolo,Chapitre,Chapter]  % definizione stringhe multilingua
+    \!ldef\!mlappendix[Appendice,Appendice,Appendix]
+    \!ldef\!mlcontents[Indice,Table des mati\`eres,Table of Contents]
+    \!ldef\!mlindex[Indice analitico,Index,Subject Index]
+    \!ldef\!mlintroduction[Prefazione,Introduction,Introduction]  % oppure "Preface"
+    \!ldef\!mlsummary[La Tesi di Laurea in breve,Summary,Orientation]
+    \!ldef\!mlbibliography[Bibliografia,R\'ef\'erences bibliographiques,References]
+    \!ldef\!mlfigure[Fig.,Fig.,Figure]
+    \!ldef\!mlthanksto[Ringraziamenti,?mlthankto?,Acknowledgments]     % da tradurre
+    \!ldef\!mlproof[Dimostrazione,D\'emonstration,Proof]}
+\!setmlstrings                % evita errore in caso di mancato uso di \set language
+\def\!setlanguage#1{%
+    \!ifundefined{ithyph}\!hypherr    % errore nell'inizializzazione lingua italiana
+    \else
+        \!ifundefined{fhyph}\!hypherr % errore nell'inizializzazione lingua francese
+        \else\!ifundefined{ehyph}\!hypherr\fi\fi\fi    % errore iniz. lingua inglese
+    \def\!option{#1}
+    \ifx\!option\!italian                                 % "setlanguage to italian"
+        \ithyph\n!language = 1\gdef\!language{italian}
+    \else
+        \ifx\!option\!french                               % "setlanguage to french"
+            \fhyph\n!language = 2\gdef\!language{french}
+        \else
+            \ifx\!option\!english                         % "setlanguage to english"
+                \ehyph\n!language = 3\gdef\!language{english}
+            \else\!setlanguagerr\fi\fi\fi                       % opzione non valida
+    \!setmlstrings           % stringhe multilingua relative alla lingua selezionata
+    \!wlog{Options of current language are:}      % notifica su file "\jobname.log"
+    \!wlog{\language = \the\language\space (\!language)}
+    \!wlog{\lefthyphenmin = \the\lefthyphenmin}
+    \!wlog{\righthyphenmin = \the\righthyphenmin}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (6) %%% IMPOSTAZIONI GLOBALI del testo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\message{Others macros to set document style...}
+%
+% Nota. Il testo per default e' giustificato.
+% Per averlo allineato a sinistra usare il comando "\raggedright" (permette la
+% silabazione) oppure il comando (che non permette la sillabazione):
+%    \rightskip = 0pt plus1fill\parfillskip = 0pt
+% Per averlo centrato usare i comandi:
+%    \leftskip = 0pt plus1fill\rightskip = \leftskip\parfillskip = 0pt
+% eventualmente seguito da "\obeylines", oppure uno tra "{\narrower ...testo...}" e
+% "{\narrower\narrower ...testo...}".
+%
+\newdimen\!pagewidth
+\newtoks\!globalstyle
+\newtoks\!magnification
+\!globalstyle = {
+    \if!condensed
+        \hsize = 11cm                           % larghezza pagina (default = 6.5in)
+        \vsize = 17.8cm                         % lunghezza pagina (default = 8.9in)
+        \if!bothsides\hoffset = 2.25cm            % offset orizzontale (default = 0)
+        \else\hoffset = 5.6cm\fi
+        \voffset = 0cm                             % offset verticale  (default = 0)
+        \topskip = 14pt          % distanza tra "\headline" e testo (default = 10pt)
+        \parindent = 6mm                  % indentazione della prima linea paragrafi
+        \parskip = 0pt                                    % distanza tra i paragrafi
+        \mathsurround = 1pt          % distanziamento tra simboli matematici e testo
+        \tolerance = 200\fi
+    \if!normal
+        \hsize = 13cm\vsize = 19.5cm
+        \if!bothsides\hoffset = .6cm\else\hoffset = 1.3cm\fi\voffset = 1.6cm
+        \topskip = 14pt
+        \parindent = 6mm\parskip = 0pt
+        \mathsurround = 0pt
+        \tolerance = 400\fi
+    \if!expanded
+        \hsize = 14.4true cm\vsize = 21.3true cm
+        \if!bothsides\hoffset = .6true cm\else\hoffset = 1.3true cm\fi
+        \voffset = 1.6true cm\topskip = 14pt
+        \parindent = 6mm\parskip = 0pt
+        \mathsurround = 1pt
+        \tolerance = 700\fi
+    \if!slide
+        \hsize = 16.3true cm\vsize = 16true cm
+        \hoffset = 0true cm\voffset = 3true cm\topskip = 0pt
+        \baselineskip = 1.1\baselineskip\parindent = 0pt\parskip = .5\baselineskip
+        \mathsurround = 0pt
+        \tolerance = 4000                      % valore alto per limitare i problemi
+        \raggedbottom\fi             % maggiore liberta' di impaginazione nei lucidi
+    \global\!pagewidth = \hsize}          % nota. NON mettere "\the\!globalstyle..."
+\!magnification = {%                            % ...perche' chiama "\magnification"
+    \if!normal\magnification\magstephalf\fi
+    \if!expanded\magnification\magstep1\fi
+    \if!slide\magnification\magstep4\fi}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (7) %%% CONTATORI per numerazione automatica e macro annesse %%%%%%%%%%%%%%%%%%%%%
+\message{Counters for chapters, sections, subsections, foot notes, etc...}
+%
+\newcount\!nchapter\newcount\!nappendix\newcount\!nsection\newcount\!nsubsection
+\newcount\!nfigure\newcount\!nformula\newcount\!nfootnote
+% Nota tecnica. L'azzeramento dei contatori creati con "\newtheorem" e' automatico
+% ed avviene mediante uso di variabili contatore (ne vengono per questo create due
+% ad ogni esecuzione di "\newtheorem" (vedi note della macro "\newtheorem")).
+\def\!clearseccounters{          % azzeramento contatori di livello 2 (liv. sezione)
+    \global\!nfigure = 0\global\!nformula = 0\global\!nfootnote = 0
+    \global\!nsubsection = 0}
+\!nchapter = 0\!nappendix = 0                            % vengono azzerati solo qui
+\def\!clearallcounters{    % azzeramento di tutti i contatori (livello 1 = capitolo)
+    \global\!nsection = 0\global\!nfootnote = 0\global\!clearseccounters}
+\!clearallcounters                                % azzeramento di tutti i contatori
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (8) %%% ELEMENTI del documento (CAPITOLO, SEZIONE, ecc.) %%%%%%%%%%%%%%%%%%%%%%%%%
+\message{Definitions of 'chapter', 'section', 'subsection', etc...}
+%
+% Nota. Come utilizzare gli elementi definiti in questo gruppo.
+%   1. Pagina di copertina della [sotto]tesi.
+%      Sintassi: \cover#1#2#3#4#5#6
+%      Parametri: 
+%         #1 : sopratitolo ("Tesi di Laurea" oppure "Sottotesi di Laurea")
+%         #2 : titolo della [sotto]tesi
+%         #3 : relatore
+%         #4 : candidato
+%         #5#6 : a.a.
+%      Esempio:
+%         \cover
+%         {Tesi di Laurea}
+%         {Titolo della Tesi}
+%         {Relatore:\cr prof.~Angelo Negro}{Candidato:\cr Davide Madrisan}
+%         {1996}{1997}
+%
+%   2. Macro "appendix", "chapter", "section", "subsection", "abstract".
+%      Sintassi:
+%         \appendix#1#2\par   \chapter#1#2\par   \section#1#2\par
+%         \subsection#1\par   \abstract
+%      Parametri.
+%         #1 : stringa del titolo del capitolo (appendice, sezione o sottosezione)
+%         #2 : stringa che apparira' nell'"headline (opzionale, vedi nota2)
+%
+%      Nota1. Tutti questi oggetti vengono numerati automaticamente.
+%      IMPORTANTE. Lasciare almeno una riga vuota dopo le dichiarazioni e prima del
+%      testo del capitolo, sezione o sottosezione (oppure scrivere "\par").
+%      Nota2. Il parametro #2 serve unicamente nei casi in cui la stringa #1 e'
+%      cosi' estesa in lunghezza da non poter essere contenuta nel box "\headline".
+%      In questo caso il parametro #2 dovra' essere una versione sintetizzata di #1.
+%
+%      Esempi. (prestare particolare attenzione agli spazi utilizzati)
+%         1. \chapter{Titolo lungo capitolo1}{Titolo corto per "\headline"}
+%
+%            \abstract
+%            ...Testo di introduzione al capitolo...
+% 
+%            \section{Titolo lungo della sezione1}
+%            {Stringa sintetica per "\headline" della sezione1}
+%
+%            ...Testo del capitolo...
+%
+%            \subsection{Titolo sottosezione}\par    % mettendo \par non serve la...
+%            ...Testo della sottosezione             % ...riga vuota
+%
+%         2. \appendix
+%            {Titolo non troppo lungo dell'appendice A}
+%
+%            ...(etc: come nell'es.1)...
+%
+%   3. Macro "contents", "index", "introduction", "bibliography", "thanksto".
+%      Sintassi: \contents   \index   \introduction   \bibliography   \thankto
+%      Esempio:
+%         \thankto
+%         ... testo della pagina dei ringraziamenti
+%
+%   4. Macro "biblio", "nbiblio", "bdot".
+%      Sintassi: \biblio#1#2#3   \nbiblio#1#2#3   \bdot
+%         "\nbiblio" numera automaticamente le voci bibliografiche.
+%         Per non avere la numerazione usare la macro "\biblio".
+%         "\bdot" e' un puntino centrato separatore di elementi della bibliografia.
+%      Parametri:
+%         #1 : autori
+%         #2 : titolo volume
+%         #3 : casa editrice
+%      Esempio:
+%         \bibliography
+%         \nbiblio{Glowinsky~R., Lions~J.L, Trémolières~R.}
+%         {Analyse numerique des inéquations variationnelles}{Dunod, Paris, 1976}
+%         \nbiblio{J.L.~Lions}
+%         {\ehyph
+%          Optimal Control of System Governed by Partial Differential Equations}
+%         {Springer-Verlag, Berlin\bdot Heildelberg\bdot New York, 1971}
+%
+%   5. Uso e sintassi degli oggetti di tipo teorema (con numerazione automatica).
+%      Quando occorre un oggetto del tipo teorema, osservazione, ecc. occorre
+%      dichiararlo come segue:
+%         \newtheorem[\teorema]{Teorema}
+%         \newtheorem[\osserv]{Osservazione}
+%      Con la prima dichiarazione ad esempio viene creato l'oggetto "Teorema" che
+%      potra' essere richiamato nel testo mediante il comando "\teorema".
+%      IMPORTANTE: se il documento sta tutto in un unico file allora e' sufficiente
+%      dichiararli prima del loro uso. Se invece il documento e' costituito da piu'
+%      file (per esempio uno per ogni capitolo della tesi), bisogna dichiararli in 
+%      un file che chiama tutti i file della tesi. Questo perche' gli oggetti
+%      dichiarati da "\newtheorem" sono locali e pertanto definiti solo nel file nel
+%      quale sono nati (e nei file chiamati da questo con il comando "\input").
+%      Dunque una soluzione e' creare un file "tesi.tex" con le istruzioni seguenti:
+%
+%         [...scelta degli stili con i comandi della famiglia "\set"...]
+%         \newtheorem[\teorema]{Teorema}
+%         \newtheorem[\osserv]{Osservazione}
+%         [...ecc...]
+%
+%         \input chapter1 % primo file tesi
+%         \input chapter2 % secondo file tesi
+%         [...ecc...]     % altri file tesi
+%         \bye            % fine tesi!
+%    
+%      La sintassi completa ad es. di "\teorema" e':
+%         \teorema (Titolo teorema) [etichetta]
+%      E' necessario mettere almeno uno spazio tra "\teorema" e "(" e tra ")" e "[".
+%      "Titolo teorema" e' una stringa opzionale che indica il nome del teorema come
+%         in: \teo (Lax-Milgram)
+%      "etichetta" indica alla macro "\newtheorem" di creare una definizione
+%         "\etichetta" che conterra' il numero corrente di capitolo e teorema.
+%         Anche "\etichetta" e' opzionale. Essa permette i RIFERIMENTI SIMBOLICI!
+%         Nel testo cioe' ci si riferisce a quel teorema non direttamente tramite il
+%         suo numero (ad es. "teorema~1.2"), ma mediante \ref{etichetta}" (cioe' 
+%         "teorema~\ref{etichetta}").
+%         Il risultato in output e' identico, ma in questo modo se si aggiungeranno
+%         o toglieranno parti di testo nel documento la numerazione si aggiustera'
+%         da se' e non si dovra' faticare per cercare di correggere tutti e soli (!)
+%         i numeri degli oggetti teoremi coinvolti dall'ultima modifica.
+%         Per facilitare ulteriormente le cose tutti questi oggetti teorema, con
+%         tanto di numero ed etichetta, vengono elencati minuziosamente nel file
+%         "\jobname.log" (cioe' nel nostro caso "tesi.log").
+%
+%      Esempio:
+%         \newtheorem[\teo]{Teorema}
+%         [... comandi "\chapter", "\abstract", "\section", ...Testo...]
+%         \teo (Lax-Milgram) [tLaxMil]     % ad es. primo teorema del primo capitolo
+%         Testo del teorema...
+%            \proof                 % (per una spiegazione di "\proof" vedere oltre)
+%             Testo della dimostrazione...
+%            \endof{proof}          % fine dimostrazione
+%         \endof{teo} % fine teorema
+%
+%         Apparira' in output:
+%         ...Testo...
+%         Teorema 1.1 (Lax-Milgram) Testo del teorema...
+%         ...
+%         Dimostrazione. Testo della dimostrazione...
+%         ... []
+%
+%      Inoltre "\ref{tLaxMil}" sara' la stringa "1.1" per i riferimenti simbolici.
+%      Naturalmente l'indentazione usata nell'esempio non e' necessaria ed il blocco
+%      "\proof ... \endof{proof}" puo' essere omesso. 
+%      Visto il carattere opzionale degli argomenti di "\teo", sono leciti anche i
+%      comandi seguenti:
+%         \teo (Lax-Milgram) [tLaxMil] ... \endof{teo}
+%         \teo [LaxMil]                ... \endof{teo}
+%         \teo (Lax-Milgram)           ... \endof{teo}
+%         \teo                         ... \endof{teo}
+% 
+%      Nota. I contatori degli oggetti teorema si riazzerano in modo automatico ad
+%      ogni inizio di nuovo capitolo.
+%      NOTA IMPORTANTE alle SPAZIATURE AUTOMATICHE. La spaziatura verticale
+%      automatica fallisce se una sezione o sottosezione comincia con un oggetto di
+%      tipo "theorem" non preceduto da testo. Lo spazio verticale risulta infatti 
+%      troppo ampio.
+%      In questo caso usare il comando "\removebigskip" prima dell'oggetto "theorem"
+%      (o aggiungere del testo all'inizio della sezione o sottosezione).
+%
+%   6. Macro "\proof", "\marginalnote", "\topfigure", "\midfigure".
+%      Sintassi: 
+%         \proof ...testo della dimostrazione... \endof{proof}
+%         \marginalnote#1
+%         \topfigure#1#2    % spazio figura inserita ad inizio foglio (se possibile)
+%         \midfigure#1#2           % spazio nel posto voluto (o nella pag. seguente)
+%      Parametri: 
+%         \marginalnote: #1 testo da inserire come nota a margine.
+%         \...figure   : #1 e' lo spazio verticale occupato dalla figura,
+%                        #2 e' la legenda della figura.
+%      Esempi:
+%         1. \theorem
+%            ...testo del teorema...
+%              \proof
+%              ...testo della dimostrazione...
+%              \endof{proof} % fine dimostrazione
+%            \endof{theorem} % fine teorema
+%         2. \marginalnote{da rivedere}
+%         3. \topfigure{6cm}{Orbita quasi periodica}
+%
+%   7. Macro "\slide".
+%      Sintassi:
+%         \slide ...testo di una slide... \endof{slide}
+%
+%  .(1) %%% macro "\ref" per i riferimenti simbolici, "\endof" .....................
+\def\ref#1{%
+    \expandafter\ifx\csname#1\endcsname\relax\!fooerr\else\csname#1\endcsname\fi}
+% Nota tecnica. NON inserire \bgroup...\egroup, perche' non compatibili con \slide
+\def\endof#1{%
+    \let\!the = \the
+    \!ifstrcmp{abstract}{#1}\let\!the = \relax\fi%                       % casi...
+    \!ifstrcmp{footnote}{#1}\let\!the = \relax\fi%                       % in cui...
+    \!ifstrcmp{itemlist}{#1}\let\!the = \relax\fi%                       % #1...
+    \!ifstrcmp{proof}{#1}\let\!the = \relax\fi%                          % non e'...
+    \!ifstrcmp{slide}{#1}\let\!the = \relax\fi%                          % un token
+    \!ifundefined{end!#1}\!endoferr\else\!the\csname end!#1\endcsname\fi
+    \ignorespaces}
+%
+%  .(2) %%% definizione di "cover", "thanksto" .....................................
+\def\!centerlines#1{%                  % centra orizzontalmente le linee di testo #1
+    \vbox{\leftskip = 0pt plus1fill\rightskip = \leftskip\noindent#1}}
+\def\cover#1#2#3#4#5#6{
+    \!wlog{Formatting Cover...}\bgroup
+    \if!slide\vsize = 22.3true cm\voffset = 1.6true cm
+    \else\advance\vsize by 1true cm\fi
+    \noheadandfootlines
+    \!centerlines{
+        \baselineskip = 21true pt\!dunhillfont
+        Università di Torino\break
+        Facoltà di Scienze Matematiche Fisiche e Naturali\break
+        Corso di Laurea in Matematica}
+    \vskip 4.6true cm % ex. 4true cm
+    \centerline{\!dunhillfont#1}
+    \vskip 1true cm
+    \!centerlines{\baselineskip = 40true pt\!covertitlefont#2}
+    \vskip 4.5true cm
+    \hbox to\!pagewidth{
+        \baselineskip = 21true pt\!dunhillfont
+        \vtop{\halign{##&\strut##\hfil\cr#3\crcr}}\hfil
+        \vtop{\halign{##&\strut##\hfil\cr#4\crcr}}}
+    \vfill
+  % \if!slide\vfill\else
+  %     \hbox to\!pagewidth{%    % logo dell'universita' (da http://www.dm.unito.it)
+  %     \hss\hskip.4em                                 % disgustosamente empirico...
+  %     \hbox to 2.5cm{\special{bmp:unito.bmp x=2.5cm,y=2.5cm}\hfil}\hss}
+  %     \vskip 22true pt\fi
+    \centerline{\!dunhillfont Anno Accademico #5\thinspace\raise.5ex\hbox{-}#6}
+    \supereject\putheadandfootlines\egroup}
+%
+%  .(3) %%% definizione di "appendix", "chapter", "section", "subsection" ..........
+%    ..(1) %%% definizione di "CHAPTER" ............................................
+\pageno = 1    % si inizia da pagina 1 per default (se c'e' l'indice invece da i=-1)
+\newskip\!topglueamount\!topglueamount = 1cm plus 3mm minus 3mm
+\catcode`@ = 11
+\def\!topglue{%
+    \if!slide\vglue.4cm plus 2mm minus 2mm
+    \else\vglue\!topglueamount\vskip\z@ plus.3\vsize\vskip\z@ plus-.3\vsize\fi}
+\catcode`@ = 12
+\newif\if!appendix\!appendixfalse                     % e' un capitolo di appendice?
+\newif\if!bigskip\!bigskipfalse     % per settare automaticamente gli skip verticali
+\newif\if!takecare\!takecarefalse                    % per gestire capitoli speciali
+% Nota tecnica. "\if!simplified!appendix!headline" introdotta a grande richiesta di
+% Federico Borio. In caso di mancanza di "\section" nell'appendice, viene modificata
+% e semplificata automaticamente l'intestazione "\headline" nella parte relativa
+% alla sezione.
+\newif\if!simplified!appendix!headline\!simplified!appendix!headlinefalse
+\long\gdef\bigtitle#1{\chapter{#1}{} \par}              % sinonimo per formato slide
+\def\chapter {%
+    \!clearallcounters%
+    \if!slide\else%
+        \par\vfill\eject%                         % nuovo capitolo ---> nuova pagina
+        \ifodd\pageno\else%
+            \global\!hideheadlinetrue\ \vfill\eject\fi% % comincia su pagina dispari
+        \putheadandfootlines                                         % precauzionale
+        \global\!simplified!appendix!headlinetrue\fi        % appendice semplificata
+    \!ifnextchar{[}
+        {\!appendixtrue\!getchoption }{\!appendixfalse\!getchoption [appendix] }}
+\def\!getchoption [appendix] #1#2 \par{%                % macro capitolo e appendice
+    \xdef\!chaptertitle{#2}%
+    \if!appendix
+        \global\advance\!nappendix by 1
+        \gdef\!appendixletter{%
+            \ifcase\!nappendix%         % al massimo 11 appendici (mi sembra basti!)
+                \or A\or B\or C\or D\or E\or F \or G\or H\or I\or L\or M\fi}\fi
+    \if!slide%
+        \!wlog{. BigTitle. {#1}}%
+        \par\noindent\vbox{%
+            \leftskip = 0pt\rightskip = 0pt plus1fill%
+            {\noindent\!titlefonts#1}}%
+        \vskip 0pt%
+    \else
+        % rende il parametro #2 opzionale (nel caso #1=#2)
+        \ifx\!chaptertitle\!empty\def\!chaptertitle{#1}\fi
+        \global\!takecarefalse
+        \global\!bigskipfalse               % reset della variabile ad ogni capitolo
+        \!topglue
+        % nota tecnica: viene incrementato il contatore del numero di capitolo anche
+        % se si tratta di un'appendice per permettere l'azzeramento automatico dei
+        % contatori degli oggetti di tipo teorema (il tutto funziona sotto l'ipotesi
+        % ragionevole che le appendici siano a fine tesi e non siano seguite da 
+        % ulteriori capitoli)
+        \global\advance\!nchapter by 1
+        \if!appendix                                     % si tratta di un'appendice
+            \!wlog{. Appendix \!appendixletter. \!chaptertitle}
+            \if!writingcontents%       % istruzioni per la creazione del file indice
+                \chapter!to!contents{\!mlappendix\ \!appendixletter}{#1}{\folio}\fi
+            \rightline{\strut\!numberfont\!mlappendix\ \!appendixletter}
+        \else
+            \!wlog{. Chapter \the\!nchapter. \!chaptertitle}
+            \if!writingcontents%       % istruzioni per la creazione del file indice
+                \chapter!to!contents{\!mlchapter\ \the\!nchapter}{#1}{\folio}\fi
+            % se c'e' una prefazione non si puo' azzerare il contatore delle pagine
+            \ifnum\pageno < 0\pageno = 1\fi   % non c'e' prefaz. (e'< 0 nell'indice)
+            \rightline{\strut\!numberfont\!mlchapter\ \the\!nchapter}\fi
+        \if!expanded\medskip\else\bigskip\fi\hrule height.4pt\bigskip
+        \vbox{%
+            \pretolerance = 10000%                       % impedisce la sillabazione
+            \leftskip = 0pt plus 1fill\!titlefonts #1}
+        \vskip.6cm
+        \global\!hideheadlinetrue\fi}   % no "\headline" in pag. con titolo capitolo
+\def\appendix{\chapter[appendix] }
+\def\!appendixletter{}   % evita errore in fase di compilazione alla fine cap. prec.
+%
+\newcount\!parnum\!parnum = 0          % altro ausilio per skip verticali automatici
+\newcount\!savedparnum\!savedparnum = 0                                 % come sopra
+\everypar = {\global\advance\!parnum by 1}                         % NON MODIFICARE!
+%
+%    ..(2) %%% definizione di "SECTION" ............................................
+\long\gdef\medtitle#1{\section{#1}{} \par}              % sinonimo per formato slide
+\long\def\section#1#2 \par {%
+    \bgroup\if!slide%
+        \vbox{%
+            \!wlog{. . MedTitle. {#1}}%
+            \ignorespaces\noindent\leftskip = 0pt\rightskip = 0pt plus 1fill%
+            \!sectionfonts#1}\par%
+    \else%
+        \def\s!arg{#2}%
+        \ifx\s!arg\!empty\def\s!arg{#1}\fi%    % rende #2 opzionale (nel caso #1=#2)
+        \global\advance\!nsection by 1\global\!nsubsection = 0%
+        \!wlog{. . Section \the\!nchapter.\the\!nsection. \s!arg}%
+        \global\!simplified!appendix!headlinefalse % \headline app. non semplificata
+        \mark{%                              % per avere "\headline" destra corretta
+            \!sectiontitle\noexpand\or
+            \if!appendix\!appendixletter
+            \else\the\!nchapter\fi.\the\!nsection\enskip\s!arg\noexpand\or
+            \!chaptertitle}%
+        \if!bigskip\vskip 10pt plus 3pt minus 3pt% e' gia' stato fatto un "\bigskip"
+        \else\vskip 22pt plus 7pt minus 7pt\fi%
+        \penalty-200%
+        \global\!bigskipfalse%               % reset della variabile ad ogni sezione
+        \global\!parnum = 0%                  % come sopra (per evitarne l'overflow)
+        \setbox0 = \hbox{%
+            \!sectionfonts%
+            \if!appendix\!appendixletter\else\the\!nchapter\fi.\the\!nsection%
+            \enspace\hskip.25em}%
+        \parindent = \wd0%
+        \hbox{\vtop{%
+            %\exhyphenpenalty = 10000%                    % inibisce la sillabazione
+            %\pretolerance = 10000%                      % impedisce la sillabazione
+            \item{\unhbox0\hskip-.5em}%
+            \rightskip = 0pt plus1fill\!sectionfonts #1}}%
+        \nobreak\bigskip%
+        \mark{%                              % per avere "\headline" destra corretta
+            \if!appendix\!appendixletter%
+            \else\the\!nchapter\fi.\the\!nsection\enskip\s!arg\noexpand\or%
+            \if!appendix\!appendixletter%
+            \else\the\!nchapter\fi.\the\!nsection\enskip\s!arg\noexpand\or%
+            \!chaptertitle}%
+        \xdef\!sectiontitle{%
+            \if!appendix\!appendixletter%
+            \else\the\!nchapter\fi.\the\!nsection\enskip\s!arg}%
+        \if!writingcontents%           % istruzioni per la creazione del file indice
+            \if!appendix%                                    % trattasi di appendice
+                \section!to!contents{%
+                    \!appendixletter}{\the\!nsection}{#1}{\the\pageno}%
+            \else\section!to!contents{%
+                \the\!nchapter}{\the\!nsection}{#1}{\the\pageno}\fi\fi\fi%
+    \egroup\noindent\ignorespaces}
+%
+%    ..(3) %%% definizione di SUBSECTION ...........................................
+\long\gdef\smalltitle#1{\subsection{#1} \par}           % sinonimo per formato slide
+\long\def\subsection#1 \par {%
+    \bgroup\if!slide
+        \!wlog{. . SmallTitle. {#1}}%
+        \vbox{%
+            \leftskip = 0pt\rightskip = 0pt plus 1fill%
+            \noindent\ignorespaces\!subsectionfont#1}%
+        \par\noindent\ignorespaces%
+    \else
+        \global\advance\!nsubsection by 1%
+        \!wlog{. . . Subsection \the\!nchapter.\the\!nsection.\the\!nsubsection. #1}
+        \if!bigskip\vskip 3pt plus 1pt minus 1pt%
+        \else\vskip 15pt plus 5pt minus 5pt\fi
+        \penalty-100
+        \global\!bigskipfalse           % reset della variabile ad ogni sottosezione
+        \setbox0 = \hbox{%
+            \!subsectionfont%
+            \if!appendix\!appendixletter\else\the\!nchapter\fi.%
+            \the\!nsection.\the\!nsubsection\enspace\hskip.25em}
+        \parindent = \wd0%
+        \hbox{\vtop{%
+            %\exhyphenpenalty = 10000%                    % inibisce la sillabazione
+            %\pretolerance = 10000%                      % impedisce la sillabazione
+            \item{\unhbox0\hskip-.5em}%
+            \rightskip = 0pt plus1fill\!subsectionfont #1}}
+        \nobreak\bigskip
+        \if!writingcontents%           % istruzioni per la creazione del file indice
+            \if!appendix\subsection!to!contents{%            % trattasi di appendice
+                \!appendixletter}{\the\!nsection}{\the\!nsubsection}{#1}%
+                {\the\pageno}%
+            \else\subsection!to!contents{%
+                \the\!nchapter}{\the\!nsection}{\the\!nsubsection}{#1}%
+                {\the\pageno}\fi\fi\fi
+    \egroup\noindent\ignorespaces}
+%
+%    ..(4) %%% definizione di "\abstract" ..........................................
+\outer\def\abstract{\if!slide\else\vskip 22pt plus7pt minus7pt\fi\noindent}
+\outer\def\end!abstract{\relax}
+%
+%  .(4) %%% def."\contents", "\index", "\introduction", "\bibliography", "\thanksto"
+\def\!chapter#1#2{%
+    \if!slide\else                        % nel formato "slide" non sono disponibili
+        \!wlog{Processing #1...}
+        \par\vfill\eject
+        \ifodd\pageno\else%
+            \global\!hideheadlinetrue\ \vfill\eject\fi% % comincia su pagina dispari
+        \putheadandfootlines                                         % precauzionale
+        \xdef\!putinheadline{#2}%
+        \if!writingcontents%           % istruzioni per la creazione del file indice
+            \specialchapter!to!contents{#2}{\the\pageno}\fi
+        \!takecaretrue\!hideheadlinetrue
+        \!topglue
+        \rightline{\strut\!titlefonts #2}
+        \nobreak\if!condensed\vskip 1.4cm\else\vskip 1.4cm\fi
+        \ifx\!putinheadline\!mlcontents%         % l'indice ha la numerazione romana
+            \global\pageno = -1
+        \else\ifnum\pageno < 0\pageno = 1\fi\fi  % finito l'indice e c'e' prefazione
+    \noindent\fi}
+\def\contents{\!chapter{Contents}{\!mlcontents}}
+\def\index{\!chapter{Index}{\!mlindex}}
+\def\summary{\!chapter{Summary}{\!mlsummary}}
+\outer\def\introduction{\!chapter{Introduction}{\!mlintroduction}}
+\outer\def\bibliography{\!chapter{Bibliography}{\!mlbibliography}}
+\outer\def\thanksto{\!chapter{ThantksTo}{\!mlthanksto}}
+%
+%    ..(1) %%% definizioni riguardanti la FORMATTAZIONE SU INDICE del CAPITOLO .....
+% Se non si vogliono i puntini usare la seconda definizione.
+\catcode`@ = 11
+\def\rdotfill{\leaders\hbox{$\m@th\mkern2.1mu.\mkern2.1mu$}\hfill}
+%\def\rdotfill{\hfill}
+\catcode`@ = 12
+\newskip\cntchapterskipamount\cntchapterskipamount = 18pt plus 6pt minus 6pt
+\newdimen\cntrightoffset\cntrightoffset = .65 cm
+\def\cntchapter#1#2#3{%
+    \bgroup\rightskip = \cntrightoffset
+    \vskip\cntchapterskipamount\smallskip\penalty-500%
+    \hbox to\!pagewidth{\ninebf\strut#1\hss}%
+    \vskip 1pt
+    \noindent\tenbf#2\rdotfill\rlap{\hbox to\rightskip{\hfil#3}}
+    \smallskip\egroup}
+\def\chapter!to!contents#1#2#3{%
+    \write\!contents{}
+    \write\!contents{%
+        \string\cntchapter\string{#1\string}\string{#2\string}\string{#3\string}}}
+%
+%    ..(2) %%%  macro per formattazione su indice capitoli intro, biblio, ecc. .....
+\def\cntspcchapter#1#2{%
+    \vskip\cntchapterskipamount%
+    \hbox to\!pagewidth{\tenbf#1\rdotfill\hbox to\cntrightoffset{\hfil#2}}}
+\def\specialchapter!to!contents#1#2{%
+    \write\!contents{}
+    \write\!contents{\string\cntspcchapter\string{#1\string}\string{#2\string}}}
+%
+%    ..(3) %%% definizioni riguardanti la FORMATTAZIONE SU INDICE delle SEZIONI ....
+\def\cntsection#1#2#3#4{%
+    \bgroup\tenrm
+    % nota. "99.9" vuole indicare a TeX lo spazio per un numero massimo di capitoli
+    % pari a 99 e di sezioni per capitolo pari a 9 (dovrebbe essere sufficiente...)
+    \setbox0 = \hbox{99.9\hskip.8em}\parindent = \wd0\rightskip = \cntrightoffset
+    \setbox0 = \hbox{#1.#2}
+    \exhyphenpenalty = 10000                              % inibisce la sillabazione
+    \endgraf\noindent\hskip\wd0\llap{#1.#2}\hskip-\wd0
+    \hangindent\parindent\indent{#3}\rdotfill\rlap{\hbox to\rightskip{\hfil#4}}
+    \smallskip\egroup}
+\def\section!to!contents#1#2#3#4{%
+    \write\!contents{%
+        \string\cntsection\string{#1\string}\string{#2\string}\string{#3\string}%
+        \string{#4\string}}}
+%
+%    ..(4) %%% definizioni riguardanti la FORMATTAZIONE SU INDICE delle SOTTOSEZIONI
+\def\cntsubsection#1#2#3#4#5{
+    \bgroup\tenrm
+    % nota. "99.9.9" vuole indicare a tex lo spazio per un numero massimo di 
+    % capitoli pari a 99, di sezioni per capitolo pari a 9 (commento come sopra) ed
+    % infine di sottosezioni per sezione pari a 9 (questo credo che basti)
+    \setbox0 = \hbox{99.9\hskip.8em99.9.9\hskip.8em}
+    \parindent = \wd0\rightskip = \cntrightoffset
+    \setbox0 = \hbox{99.9\hskip.8em#1.#2.#3}
+    \exhyphenpenalty = 10000                              % inibisce la sillabazione
+    \endgraf\noindent\hskip\wd0\llap{#1.#2.#3}\hskip-\wd0%
+    \hangindent\parindent\indent{#4}\rdotfill\rlap{\hbox to\rightskip{\hfil#5}}%
+    \smallskip\egroup}
+\def\subsection!to!contents#1#2#3#4#5{%
+    \write\!contents{%
+        \string\cntsubsection\string{#1\string}\string{#2\string}\string{#3\string}%
+        \string{#4\string}\string{#5\string}}}
+%
+%    ..(5) %%% definizioni riguardanti la formattazione della bibliografia .........
+\newcount\!nbiblio\!nbiblio = 0
+\def\!bskip{\hskip.7em\relax}
+\def\bdot{$\,\cdot\,$}   % puntino centrato per separare elementi nella bibliografia
+\def\nbiblio#1#2#3{%                        % testo bibliografia preceduto da numero
+    \bgroup\global\advance\!nbiblio by 1
+    \!ninepoint\frenchspacing\exhyphenpenalty = 10000     % inibisce la sillabazione
+    \parindent = .8cm\par\hangindent\parindent%
+    \indent\llap{\copy\osqrbracket\the\!nbiblio\copy\csqrbracket\enspace}%
+    #1.\!bskip{\it#2}.\!bskip#3.\smallskip\egroup}
+\def\biblio#1#2#3{%                     % testo bibliografia non preceduto da numero
+    \bgroup\!ninepoint\frenchspacing\exhyphenpenalty = 10000 % inibisce sillabazione
+    \leftline{\sc#1.}\noindent{\it#2}.\!bskip#3.\smallskip\egroup}
+\def\biblioref#1{%                                 % per i riferimenti bibliografici
+    \nobreak\copy\osqrbracket#1\copy\csqrbracket\/}
+%
+%    .(5) %%% definizioni degli OGGETTI DI TIPO TEOREMA.............................
+\message{Definition of 'newtheorem', 'proof', 'marginalnote' and 'figure'...}
+%
+\def\removebigskip{\vskip-\lastskip}     % \def\removebigskip{\vskip-\bigskipamount}
+\def\!tmpname{}\def\!thethname{}
+\def\th!getname (#1) {%   % vede se e' stata dichiarata la stringa opzionale teorema
+    \xdef\!thname{#1}\th!checkforlabel}
+\def\th!checkforlabel {% % vede se e' stata dichiarata l'etichetta opzionale teorema
+    \!ifnextchar{[}{\th!lgetreference }{\th!lgetreference [] }}
+\def\th!lgetreference [#1] {%        % memorizza l'etichetta e formatta il paragrafo
+    \def\!tmparg{#1}
+    % viene controllato che l'etichetta non sia gia' utilizzata
+    \!ifundefined{#1}\else\ifx\!tmparg\!empty\else\!fooexisterr\fi\fi
+    \if!slide%
+        \!wlog{. . . . \!thethname. (\!thname)}%
+        \bgroup\ignorespaces\noindent%
+        \!ifempty{\!thname}%
+            {{\tensb\!thethname.}}{{\tensb\!thethname\enskip(\!thname).}}%
+        \enskip\ignorespaces\tensf%
+    \else
+        \if!appendix                                         % trattasi di appendice
+            \expandafter\xdef\csname #1\endcsname{\!appendixletter.\!thenumber}
+        \else                                               % e' un normale capitolo
+            \expandafter\xdef\csname #1\endcsname{\the\!nchapter.\!thenumber}\fi
+            % istruzioni di formattazione del paragrafo
+            \xdef\!wattr{ (\!thname) [#1]}  % annotazioni per il file "\jobname.log"
+                \!wlog{. . . . \!thethname\space%
+                    \if!appendix\!appendixletter\else\the\!nchapter\fi.%
+                    \!thenumber.\!wattr}
+        \if!bigskip                 % e' gia' stato fatto un "\bigskip", tuttavia...
+            \advance\!savedparnum by 1
+            \ifnum\!parnum > \!savedparnum    % ...e' seguito da almeno un paragrafo
+                \penalty-100\bigskip\fi%        % allora occorre un altro "\bigskip"
+        \else
+            \penalty-100\bigskip\fi
+        \global\!bigskipfalse\ignorespaces\bgroup
+        \!ifempty{\!thname}%
+            {\if!classical%               % stringa opzionale teorema non dichiarata
+                \noindent{\bf\!thethname\hskip.25em\csname #1\endcsname.}%
+                \enskip\it\ignorespaces
+            \else%
+                {\sc\!thethname}\rm\hskip.25em\csname #1\endcsname.\enskip%
+                \ignorespaces\fi}
+            {\if!classical%                   % stringa opzionale teorema dichiarata
+                \noindent{\bf\!thethname\hskip.25em\csname #1\endcsname%
+                \enskip(\!thname).}\enskip\it\ignorespaces
+            \else%
+                {\sc\!thethname}\rm\hskip.25em\csname #1\endcsname%
+                \enskip(\!thname).\enskip\ignorespaces\fi}\fi}
+\catcode`@=11
+\def\!newcount{%      % versione non "\outer" dell'allocatore di contatori plain tex
+    \alloc@0\count\countdef\insc@unt}                    % alloca un nuovo contatore
+\def\!newtoks{%           % versione non "\outer" dell'allocatore di token plain tex
+    \alloc@5\toks\toksdef\@cclvi}                            % alloca un nuovo token
+\catcode`@=12
+% Nota tecnica. "\!tmpcount" serve per settare a zero i contatori degli oggetti
+% teorema tutte le volte che si apre un nuovo capitolo.
+\newcount\!tmpcount
+\def\gcsname{\global\csname}
+\outer\def\newtheorem[#1]#2{%                % crea un nuovo oggetto di tipo teorema
+    \if!slide\else
+        \expandafter\!newcount\csname n!\expandafter\!gobble\string#1\endcsname
+        \expandafter\!newcount\csname ch!\expandafter\!gobble\string#1\endcsname
+        \gcsname n!\expandafter\!gobble\string#1\endcsname = 0
+        \gcsname ch!\expandafter\!gobble\string#1\endcsname = \!nchapter\fi
+    \expandafter\!newtoks\csname end!\expandafter\!gobble\string#1\endcsname
+    \gcsname end!\expandafter\!gobble\string#1\endcsname = {\end!theorem}
+    \gdef#1{%                                            % definizione di "\teorema"
+        \if!slide\else
+            % se e' cambiato il capitolo, il contatore del teorema va azzerato
+            \!tmpcount = \!nchapter
+            \advance\!tmpcount by-\csname ch!\expandafter\!gobble\string#1\endcsname
+            \ifnum\!tmpcount > 0             % e' cambiato nel frattempo il capitolo
+                % aggiorna il valore del contatore capitolo riferito al teorema
+                \gcsname ch!\expandafter\!gobble\string#1\endcsname = \!nchapter
+                % azzera il contatore del teorema
+                \gcsname n!\expandafter\!gobble\string#1\endcsname = 0\fi
+            \global\advance\csname n!\expandafter\!gobble\string#1\endcsname by 1
+            \gdef\!thenumber{%
+                \the\csname n!\expandafter\!gobble\string#1\endcsname}\fi
+        \gdef\!thethname{#2}%
+        \!ifnextchar{(}{\th!getname }{\th!getname (\!tmpname) }}}%
+\def\end!theorem{%                                             % fine blocco teorema
+    \egroup\if!slide\else
+        \bigskip\!bigskiptrue%
+        \global\!savedparnum = \!parnum\fi%  % salva il numero di paragrafo corrente
+    \noindent\ignorespaces}
+%
+%  .(6) %%% definizione di "\proof", "\marginalnote", "\topfigure", "\midfigure" ...
+\def\proof{%
+    \if!slide{\medskip\bgroup\noindent\tensi\!mlproof.\enskip\ignorespaces}
+    \else\medbreak\ignorespaces\bgroup
+        \if!classical\noindent{\ninesc\!mlproof}.\enskip\ignorespaces%
+        \else\indent{\sl\!mlproof}.\enskip\ignorespaces\fi\fi\rm}
+\def\end!proof{\nobreak\enskip\vendpoint\egroup}
+% oppure. \def\end!proof{\nobreak\enskip\nendpoint\egroup}
+\newdimen\!boxht
+\def\marginalnote#1{%
+    \vadjust{%
+        \setbox0 = \hbox{\eightsf\quad#1}%
+        \!boxht = \ht0\advance\!boxht by\dp0\advance\!boxht by \lineskip
+        \kern-\!boxht\vbox to\!boxht{\rightline{\rlap{\box0}}\vss}}}
+\def\!putlegend#1{%                     % legenda della figura (anche su piu' righe)
+    \bgroup\setbox0 = \hbox{%
+        {\ninebf\!mlfigure\ \the\!nchapter.\the\!nfigure.}\enskip{\ninerm#1}}%
+    \!nnotelen = \wd0%
+    \advance\!pagewidth by -3cm%            % 3cm = margine sinistro + destro minimo
+    \ifdim\!nnotelen > \!pagewidth\!nnotelen = \!pagewidth\fi    % dim. max. ammessa
+    \advance\!pagewidth by +3cm%                    % ripristino dimensione corretta
+    \nobreak\centerline{%
+        \noindent\vbox{%
+            \hsize\!nnotelen%
+            \leftskip = 0pt%\rightskip = 0pt plus 1fill%
+            \noindent{\if!classical\ninebf\else\ninesc\fi%
+            \!mlfigure\ \if!appendix\!appendixletter\else\the\!nchapter\fi.%
+            \the\!nfigure.}\enskip{\ninerm#1}}}%
+    \ignorespaces\egroup}
+\def\topfigure#1#2{                % #1 = spazio verticale da occupare, #2 = legenda
+    \global\advance\!nfigure by 1
+    \!wlog{. . . . . . . . Figure\space\the\!nchapter.\the\!nfigure\space%
+        \string{no image\string}}
+    \topinsert\vskip #1                 % memo. inserisce "\bigskip" automaticamente
+    \medskip\!putlegend{#2}\bigskip\endinsert}
+\def\midfigure#1#2{                % #1 = spazio verticale da occupare, #2 = legenda
+    \global\advance\!nfigure by 1
+    \!wlog{. . . . . . . . Figure\space\the\!nchapter.\the\!nfigure\space%
+        \string{no image\string}}
+    \goodbreak\bigskip\midinsert\vskip #1\medskip\!putlegend{#2}\bigskip\endinsert}
+%
+%  .(6) %%% definizione di "\slide" ...............................................
+\def\slide{%
+    \vfill\eject\vglue0pt\vfill\vbox\bgroup%
+    \frenchspacing\rightskip = 0pt plus 1fill\leftskip = 0pt}
+\def\end!slide{\egroup\vfill\eject}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (9) %%% macro HEADLINE multiformato e macro FOOTLINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\!wlog{Redefinition of 'headline' and 'footline'...}
+%
+\newif\if!hideheadline\!hideheadlinefalse                 % e' la pagina del titolo?
+\def\!chaptertitle{Errore: Nome del capitolo non indicato!}
+\def\!sectiontitle{Errore: Nome della sezione non indicata!}
+\newtoks\!headfootline
+\!headfootline = {
+    \global\nopagenumbers
+    \def\!rightheadline{%
+        \vbox{%
+            \hbox to\!pagewidth{%
+                \nineit\hfill%
+                \if!takecare\!putinheadline%     % pagine di indice, prefaz., biblio
+                \else%                                         % "\headline" normale
+                    \if!appendix\!mlappendix\ \!appendixletter.%
+                    \else\!mlchapter\ \the\!nchapter.\fi%
+                    \enspace\ifcase2\expandafter\relax\topmark\fi\fi%
+            \hfill\ifnum\pageno < 0{\tenit\folio}\else{\tenrm\folio}\fi}%
+        \smallskip\hrule height.3pt}}
+    \def\!leftheadline{%
+        \vbox{%
+            \hbox to\!pagewidth{%                          % numero + titolo sezione
+                \if!bothsides%                              % stampa in fronte retro
+                    \ifnum\pageno < 0{\tenit\folio}\else{\tenrm\folio}\fi\fi%
+                \hfill\nineit%
+                \if!takecare\!putinheadline%        % pagine indice, prefaz., biblio
+                \else
+                    \if!simplified!appendix!headline      % "\headline" semplificata
+                        \!mlappendix\ \!appendixletter.\enspace%
+                        \ifcase2\expandafter\relax\topmark\fi%
+                    \else                    % e' un capitolo o un'appendice normale
+                        \ifcase0\expandafter\relax\botmark\fi\fi\fi
+            \hfill\if!bothsides\else%
+                \ifnum\pageno < 0{\tenit\folio}\else{\tenrm\folio}\fi\fi}
+            \smallskip\hrule height.3pt}}
+    \headline = {%
+        \if!hideheadline%
+            {\hfil}\global\!hideheadlinefalse%
+            \ifnum\pageno < 0%
+                \global\footline = {{\hss\nineit\folio\hss}}%   % numerazione romana
+            \else\global\footline = {{\hss\ninerm\folio\hss}}\fi%
+        \else%
+            \ifodd\pageno\!rightheadline\else\!leftheadline\fi%
+            \global\footline = {\hfill}\fi}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (10) %%% NOTE a PIE' PAGINA (carattere 9pt e contatore automatico) %%%%%%%%%%%%%%%
+\!wlog{Redefinition of 'footnote'...}
+%
+% Macro "footnote" (non disponibile nel formato slide). Sintassi:
+%    \footnote
+%     ...testo della nota a pie' pagina...
+%    \endof{footnote}.                          % (il punto viene scritto nel testo)
+% Il testo e le formule matematiche a pie' pagina hanno dimensioni ridotte (9pt).
+%
+\newif\if!footnote\!footnotefalse
+\catcode`@=11
+\def\footnoterule{\kern-3\p@\hrule width 2true in height .3pt\kern 2.6\p@}
+\def\footnote{%
+    \if!slide\!footnoterr%                                  % niente note nei lucidi
+        \insert\footins\bgroup%  % istruzioni per permettere compilaz. "\scrollmode"
+    \else%
+        \global\advance\!nfootnote by 1\!footnotetrue%
+        \!wlog{. . . . . . Footnote \the\!nfootnote.}%
+        \edef\@sf{\spacefactor\the\spacefactor}{$(^\the\!nfootnote)$}\@sf%
+        \insert\footins\bgroup\!ninepoint%
+        \interlinepenalty100\let\par = \endgraf%
+        \leftskip = 0pt\rightskip = 0pt\splittopskip = 10pt plus1pt minus1pt%
+        \floatingpenalty = 20000%
+        \smallskip\bgroup\item{$(^{\the\!nfootnote})$}\egroup\fi%
+    \ignorespaces\bgroup\strut\aftergroup\@foot\let\next\bgroup}
+\catcode`@=12
+\def\end!footnote{\egroup\!footnotefalse}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (11) %%% ambiente verbatim per INSERIRE TESTO LETTERALE (non TeX-intepretato) %%%%
+\message{Definition of control sequences for characters in the typewriter font...}
+% Esempio d'uso della macro verbatim:
+%
+%    Qualsiasi testo che si richiede venga formattato da \TeX.
+%    \verbatim
+%    matrix::~matrix() { // distruttore della classe matrix
+%       if(--p->n == 0) { // se il contatore di riferimenti diventa 0
+%          for(int r = 0; r < rows(); r++)
+%             delete p->m[r];
+%          delete p->m;
+%          delete p;
+%       }
+%    }
+%    @endverbatim
+%    \noindent Ritorno al trattamento di default del testo.
+% 
+% L'ambiente verbatim permette l'inserimento in documenti TeX di testo comprendente
+% anche i caratteri speciali TeX, che si desidera vengano trattati da TeX in modo
+% letterale, cioe' non interpretati. I caratteri supportati dall'ambiente verbatim
+% sono riportati nella seguente tabella:
+%
+%    carattere    \catcode    funzione
+%   ------------------------------------------------------------------------
+%     `\\            0         backslash is TeX escape character
+%     `\{            1         left brace is begin-group character
+%     `\}            2         right brace is end-group character
+%     `\$            3         dollar sign is math shift
+%     `\&            4         ampersand is alignment tab
+%     `\^^M          5         ascii return is end-line
+%     `\#            6         hash mark is macro parameter character
+%     `\^   `\^^K    7         circumflex and uparrow are for superscripts
+%     `\_   `\^^A    8         underline and downarrow are for subscripts
+%     `\^^I `\      10         ascii tab and ascii space are blank spaces
+%     `\~           13         tilde
+%     `\%           14         percent sign is comment character
+%
+% Per impedire a TeX di considerare questi caratteri come speciali ho modificato i
+% loro '\catcode', impostandoli tutti al valore '12'. Per far questo in blocco ho
+% utilizzato la macro plain-TeX '\dospecials':
+%
+%    \def\dospecials{%
+%       \do\ \do\\\do\{\do\}\do\$\do\&\do\#\do\^\do\^^K\do\_\do\^^A\do\%\do\~}
+%
+% In essa sono elencati i carattere speciali, preceduti dal comando '\do', che ho
+% definito (localmente) in '\uncatcodespecials' in modo da effettuare con tale macro
+% la conversione dei '\catcode' come indicato sopra:
+%
+%   \chardef\other = 12 % '\other' e' ora sinonimo di '12'
+%   \def\uncatcodespecials{\def\do##1{\catcode`##1 = \other}\dospecials}
+%
+% Per quando riguarda i caratteri restanti (tabulazione e return) ho usato la linee:
+%
+%   \chardef\active = 13 % (definito in 'plain.tex')
+%   \def\makeactive#1{\catcode`#1 = \active\ignorespaces}
+%
+%   \bgroup      % il gruppo delimita le linee di testo in cui sono attivi ^^M e ^^I
+%       \makeactive\^^M \makeactive\^^I %
+%       \gdef\setupverbatim{%
+%           \makeactive\^^M \let^^M = \newline%
+%           \makeactive\^^I \let^^I = \tabtospaces        % conversione tab in spazi
+%           \catcode`\@ = 0 \uncatcodespecials%
+%           \parskip = 0pt \baselineskip = \verbatimbaselineskip        % interlinea
+%           \obeyspaces\frenchspacing}                         % spaziatura francese
+%   \egroup
+%
+% Esse definiscono globalmente ('\gdef') la macro '\setupverbatim', che si occupa di
+% rendere letterale il trattamento dei caratteri di spaziatura (cioe' di inserire
+% nel file DVI gli spazi nelle quantita' e modalita' indicate nel testo verbatim),
+% di cambiare il '\catcode' dei due caratteri al valore '\active' e di ridefinire i
+% caratteri '^^M' (return) e '^^I' (tab) rendendoli rispettivamente sinonimi di
+% '\newline' e '\tabtospaces'.
+% Le definizioni seguenti sono naturalmente personalizzabili:
+%
+%   \def\newline{\endgraf\noindent}
+%   {\obeyspaces\gdef\tabtospaces{\ \ \ }} % un tab equivale a 3 spazi
+% 
+% ad esempio:
+%
+%   \def\newline{\endgraf\indent}
+%
+% indica a TeX di indentare le linee verbatim, mentre:
+%
+%   \newcount\linenum\linenum = 0 % contatore per numerazione linee listato
+%   \def\newline{%
+%       \advance\linenum by 1
+%       \endgraf\noindent\leavevmode\llap{\sevenrm\the\linenum.\ \ }}
+%
+% numera (in modo progressivo, iniziando da 1) le linee del testo verbatim (!).
+% Le restanti linee del blocco '\bgroup' .. '\egroup' prededente:
+%
+%    \catcode`\@ = 0
+%    \parskip = 0pt \baselineskip = \verbatimbaselineskip
+%    \obeyspaces\frenchspacing
+% 
+% settano le modalita' di spaziatura e l'interlinea del testo verbatim.
+% A questo proposito, '\verbatimbaselineskip' e' uno dei parametri personalizzabili,
+% ad esempio:
+%
+%   \verbatimbaselineskip = .95\verbatimbaselineskip
+%
+% riduce l'interlinea del testo verbatim del 5% rispetto al valore TeX corrente.
+% IMPORTANTE! L'istruzione:
+%
+%   \catcode`\@ = 0
+%
+% indica a TeX che all'interno dell'ambiente verbatim il carattere escape e' "@",
+% non "\". Per questo motivo occorre utilizzare il comando "@endverbatim" per 
+% chiudere il blocco verbatim e non "\endverbatim". 
+% In verbatim i comandi sono dunque per TeX tutte e sole le stringhe di caratteri
+% che iniziano con il carattere "@" (essi vanno utilizzati pero' con alcune cautele,
+% specialmente nei riguardi del trattamento della spaziatura...)
+% Un esempio di comando di frequente utilizzo e' '@eject' oppure '@vfill@eject' che
+% permettono di passare alla pagina successiva del documento, nel secondo caso dopo
+% aver riempito di spazio verticale la parte finale della pagina (nota: non lasciare
+% righe vuote dopo questo comando altrimenti esse verranno inserite all'inizio della
+% pagina seguente!).
+% Ancora, per inserire un file testo esterno si puo' procedere come segue:
+%
+%    \verbatim[\tentt]
+%    @input file.txt 
+%    @endverbatim
+%
+% oppure:
+%
+%    \def\inputverbatimfile{\input c:/listato.cpp}
+%    \verbatim[\tentt]
+%    @inputverbatimfile 
+%    @endverbatim
+%
+% Il carattere '@' come detto e' un carattere speciale. Se occorre inserirlo
+% all'interno del testo verbatim bisogna utilizzare la coppia di caratteri "@@"
+% (vedi definizione '\def\@{@}').
+% Consideriamo ora le linee di codice dell'ambiente verbatim:
+%
+%    \def\verbatim{%
+%        \endgraf\bgroup\the\everyverbatimbegin\setupverbatim\verbatimfont}
+%    \def\endverbatim{\egroup\removelastbox\endgraf{\the\everyverbatimend}}
+%  
+% Il comando '\verbatimfont' imposta il tipo di font che TeX utilizzera' nel blocco
+% verbatim. Tale definizione e' ovviamente personalizzabile, ad esempio:
+%
+%    \def\verbatimfont = cmtt9
+%
+% indica a TeX di utilizzare il font della famiglia '\tt', a 9pt.
+% L'istruzione '\removelastbox' indica a TeX di eliminare l'ultimo carattere '^^M'
+% del blocco verbatim, che avrebbe l'effetto di introdurre una linea vuota non
+% richiesta dopo le linee verbatim.
+% In ultimo, i due token: '\everyverbatimbegin' e '\everyverbatimend' permettono di
+% rendere automatiche azioni TeX da effettuarsi rispettivamente all'inizio ed alla
+% fine del blocco verbatim, ad esempio:
+%       
+%    \everyverbatimbegin = {
+%        % riduzione interlinea del 5% + '\bigskip'
+%        \verbatimbaselineskip = .95\verbatimbaselineskip\bigskip}
+%        % utilizzo in verbatim del font typewriter (famiglia \tt) a 9pt
+%        \font\verbatimfont = cmtt9}
+%    \everyverbatimend = {%
+%        \medskip\centerline{$\diamond\quad\diamond\quad\diamond$}\bigskip}
+%
+% permettono rispettivamente l'inserimento di un '\bigskip' prima di ogni blocco
+% verbatim e di un segno grafico seguito da '\bigskip' alla fine di ogni blocco.
+% Viene anche selezionato il tipo di carattere da utilizzarsi nelle linee di testo
+% verbatim (al posto del carattere di default '\tt').
+%
+\chardef\!other = 12
+\def\!makeactive#1{\catcode`#1 = \active\ignorespaces}
+\def\!uncatcodespecials{\def\do##1{\catcode`##1 = \!other}\dospecials}
+\def\!removelastbox{\setbox0 = \lastbox}
+
+\def\newline{\endgraf\noindent}                % definizione end-line (modificabile)
+{\obeyspaces\gdef\tabtospaces{\ \ \ }}    % un tab equivale a 3 spazi (modificabile)
+
+% azioni da eseguire ad ogni inizio e fine blocco verbatim (default = nessuna)
+\newtoks\everyverbatimbegin\everyverbatimbegin = {\relax}           % (modificabile)
+\newtoks\everyverbatimend\everyverbatimend = {\relax}               % (modificabile)
+% interlinea del testo verbatim (settata al valore corrente)
+\newskip\verbatimbaselineskip\verbatimbaselineskip = \baselineskip  % (modificabile)
+% font utilizzato nel blocco verbatim (valore di default)
+\let\verbatimfont = \tt                                             % (modificabile)
+
+\bgroup          % il gruppo delimita le linee di testo in cui sono attivi ^^M e ^^I
+    \!makeactive\^^M \!makeactive\^^I %
+    \gdef\!setupverbatim{%
+        \!makeactive\^^M \let^^M = \newline                      % ridefinizione ^^M
+        \!makeactive\^^I \let^^I = \tabtospaces           % conversione tab in spazi
+        \catcode`\@ = 0 \!uncatcodespecials                      % modifica \catcode
+        \parskip = 0pt \baselineskip = \verbatimbaselineskip            % interlinea
+        \obeyspaces\frenchspacing}                             % spaziatura francese
+\egroup
+\def\@{@}              % in verbatim il carattere "@" si ottiene con la stringa "@@"
+
+\def\verbatim{%
+    \!wlog{. . . . . . Literal text}%
+    \endgraf\bgroup\the\everyverbatimbegin\!setupverbatim\verbatimfont}
+\def\endverbatim{\egroup\!removelastbox\endgraf{\the\everyverbatimend}}
+% memo. \def\threediamonds{\centerline{$\diamond\quad\diamond\quad\diamond$}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (12) %%% macro per le FORMULE MATEMATICHE (numerazione automatica + label) %%%%%%%
+\message{Definitions about mathematical formulas...}
+%
+%  .(1) %%% FORMULE MATEMATICHE centrate + eventuale NUMERO FORMULA ................
+% Nota all' uso ed al funzionamento della macro "math"
+% Sintassi :
+%    \math <switches> [etichetta] ...formula matematica...  \endmf
+% dove "swithes" deve essere una delle seguenti combinazioni di lettere (l'ordine
+% delle lettere e' irrilevante):
+%    - "l"   formula centrata con numero di formula a sinistra,
+%    - "r"   formula centrata con numero di formula a destra,
+%    - "p"   formula (su piu' linee) centrata e preceduta da una parentesi graffa,
+%    - "lp"  formula (su piu' linee) centrata, preceduta da una parentesi graffa
+%            e con numero di formula a sinistra,
+%    - "rp"  formula (su piu' linee) centrata, preceduta da una parentesi graffa
+%            e con numero di formula a destra,
+% ed "etichetta" permette i riferimenti simbolici (vedi sopra, alla note riguardanti
+% "\newtheorem" e macro correlate).
+% Sia gli switch che l'etichetta sono opzionali ma, per come sono state implementate
+% le macro, se viene dichiarata un'etichetta viene inserito il numero di formula e
+% dovrebbe quindi comparire lo switch "l" oppure "r". Se questo viene omesso viene
+% utilizzato per default lo switch "r".
+% Inoltre se non viene dichiarata un'etichetta non viene scritto alcun numero di
+% formula, anche se compare lo switch "l" oppure lo switch "r".
+% Infine si ricordi che nel formato slide non vengono visualizzati i numeri formula.
+%
+% Esempi di uso corretto della macro:
+%    % Formula senza numero e senza parentesi graffa davanti
+%    \mathf
+%       a(u,v) = a(v,u) \forall u,v \in V.
+%    \endmf
+%    % Formula con numero a destra e parentesi graffa davanti
+%    \mathf <pr> [fAAA]     % "\fAAA" = "(1.2)", se e' la 2a formula del capitolo 1.
+%        -\Delta u        &= f &\qquad\hbox{nell'aperto }\Omega\cr
+%        u+\partial_\nu u &= g &\qquad\hbox{sul bordo }\partial\Omega\cr
+%    \endmf
+%    
+% Nell'ultimo esempio notare i caratteri "&" di allineamento multiplo! ("\mathf" e'
+% infatti di una macro periodica).
+% L'allineamento interno e' a sinistra ma se si vuole il testo matematico centrato
+% e' sufficiente farlo precedere da un "\hfil".
+%
+% In caso sia necessario usare formule matematiche complesse e numerate (ad esempio
+% formule su piu' righe con alcune di queste numerate), sono disponibili le seguenti
+% macro:
+%    \advancemathno   Sintassi "\advancemathno".
+%                     Avanza il contatore delle formule di una unita'.
+%    \setmathlabel    Sintassi "\setmathlabel{label}", dove "label" e' l'etichetta
+%                     che si vuole associare ala numero di formula e che potra'
+%                     essere richiamata con la macro "\ref{label}".
+%                     Assegna all'etichetta "label" il numero corrente del contatore
+%                     formula (ad es. (1.2) --> \ref{label}).
+%    \putmathno       Sintassi "\putmathno".
+%                     Scrive il numero della formula (del tipo "(1.2)")
+%
+% Queste macro possono essere usate ad esempio con la macro plain Tex: "\eqalignno"
+% oppure con qualsiasi macro per la scrittura di formule matematiche abbinata con
+% "\eqno" o "\leqno".
+% Esempio:
+%    $$\eqalignno{
+%        \advancemathno
+%            a+b &= c+d  &\putmathno\cr
+%              x &= w+y+z\cr
+%        \advancemathno\setmathlabel{eq2}             % \ref{eq2} <-- numero formula
+%        m+n+o+p &= q  &\putmathno\cr}$$
+%
+% oppure:
+%    $$\eqalignno{
+%        a+b &= c+d\cr
+%        x &= w+y+z\cr
+%        m+n+o+p &= q  &\mathnowithlabel{eq2}\cr}$$   % \ref{eq2} <-- numero formula
+%
+\def\advancemathno{\global\advance\!nformula by 1}
+\def\setmathlabel#1{%
+    % viene controllato che l'etichetta non sia gia' utilizzata
+    \!ifundefined{#1}\else\!fooexisterr\fi
+    \if!appendix                                             % trattasi di appendice
+        \expandafter%
+        \xdef\csname #1\endcsname{{{\rm(\!appendixletter.\the\!nformula)}}}%
+    \else%                                                  % e' un normale capitolo
+        \expandafter%
+        \xdef\csname #1\endcsname{{\rm(\the\!nchapter.\the\!nformula)}}\fi
+    \!wlog{. . . . . . . Math\space%                    % formula con etichetta
+        \if!slide\else%
+            \if!appendix\!appendixletter\else\the\!nchapter\fi.%
+            \the\!nformula. [#1] (\string\setmathlabel)\fi}}
+\def\putmathno{%
+    \if!appendix{{\rm(\!appendixletter.\the\!nformula)}}
+    \else{{\rm(\the\!nchapter.\the\!nformula)}}\fi}
+\def\mathnowithlabel#1{% macro-abbreviazione (vedi esempio sopra)
+    \advancemathno\setmathlabel{#1}\putmathno}
+\catcode`@ = 11 
+\def\!tabsmathf#1{%                   % formula matematica con tabulazione multipla!
+    \if!pswitch%                             % parentesi graffa davanti alla formula
+        \left\{\null\,\fi % togliere "\null\," se non si vuole spazio dopo la graffa
+    \vcenter{%
+        \normalbaselines\m@th%
+        \ialign{%
+            \hfil$##$\hfil&&\quad\hfil$##$\hfil\crcr%
+            \mathstrut\crcr\noalign{\kern-\baselineskip}%
+            \vcenter{%
+                \openup\jot\m@th                     % spazio verticale tra le righe
+                \ialign{%
+                    \strut$\displaystyle{##}$&&$\strut\displaystyle{{}##}$\hfil%
+                    \crcr#1\crcr}}\crcr%
+            \mathstrut\crcr\noalign{\kern-\baselineskip}}}\,%
+    \if!pswitch\right.\fi}
+\catcode`@ = 12
+\def\!tmpmfnum{}\def\!mfnum{}
+\newif\if!lswitch                                 % switch numero formula a sinistra
+\newif\if!pswitch       % switch formula su piu' righe preceduta da parentesi graffa
+\newif\if!rswitch                                   % switch numero formula a destra
+\def\mathf {%                            % macro utente : chiama le macro di parsing
+    \!lswitchfalse\!pswitchfalse\!rswitchfalse                  % reset degli switch
+    \!ifnextchar{<}{\m!getname }{\m!getname <\!tmpmfnum> }}        % ci sono switch?
+\def\m!getname <#1> {      % vede se e' stata dichiarata la modalita' di numerazione
+    \xdef\!mfnum{#1}\expandafter\!readswitches[\!mfnum]\!nil
+    \m!checkforlabel}
+\def\!readswitches[#1]\!nil{%       % legge gli switch e setta le variabili booleane
+    \!etfor\!switches:=#1\do\!reviseswitches}
+\def\!reviseswitches{%
+    \if l\!switches\!lswitchtrue
+    \else\if p\!switches\!pswitchtrue\else\if r\!switches\!rswitchtrue\fi\fi\fi}
+\def\m!checkforlabel {%     % c'e' o non c'e' un'etichetta opzionale per la formula?
+    \!ifnextchar{[}{\m!lgetreference }{\m!lgetreference [] }}
+\def\m!lgetreference [#1] {%   % controlla l'input utente e crea e setta l'etichetta
+    \def\!tmparg{#1}
+    % viene controllato che l'etichetta non sia gia' utilizzata
+    \!ifundefined{#1}\else\ifx\!tmparg\!empty\else\!fooexisterr\fi\fi
+    \ifx\!tmparg\!empty   % se non c'e' l'etichetta non c'e' il numero di formula...
+        \!lswitchfalse\!rswitchfalse             % ...dunque settaggio precauzionale
+    \else                   % c'e' l'etichetta, allora si vuole il numero di formula
+        \if!rswitch\else\if!lswitch
+            \else\!rswitchtrue\fi\fi% err.utente --> si usa per default numero a dx.
+        \global\advance\!nformula by 1\fi            % incremento numeratore formule
+    % viene creata ed inizializzata l'etichetta della formula
+    \if!slide\expandafter\xdef\csname #1\endcsname{{\rm(\the\!nformula)}}
+    \else\expandafter\xdef\csname #1\endcsname{{\rm(%
+        \if!appendix\!appendixletter\else\the\!nchapter\fi.\the\!nformula)}}\fi
+    \ifx\!tmparg\!empty\!wlog{. . . . . . . Math\space []} % formula senza etichetta
+    \else\!wlog{. . . . . . . Math\space%                    % formula con etichetta
+        \if!slide\else
+            \if!appendix\!appendixletter\else\the\!nchapter\fi.\fi%
+            \the\!nformula. [#1]}\fi%
+    \!getformula}
+\def\!getformula #1\endmf {%    % legge la formula e la stampa in modo formattato
+    \if!slide\edef\!tmpnum{\rm\the\!nformula}\else
+        \if!appendix\edef\!tmpnum{\rm\!appendixletter.\the\!nformula}    % appendice
+        \else\edef\!tmpnum{\rm\the\!nchapter.\the\!nformula}\fi\fi% normale capitolo
+    $$\!tabsmathf{#1}
+    \if!lswitch\leqno(\!tmpnum)\fi                       % numero formula a sinistra
+    \if!rswitch\eqno(\!tmpnum)\fi                          % numero formula a destra
+    $$\ignorespaces}
+%
+%  .(2) %%% FORMULE MATEMATICHE A SINISTRA + eventuale NUMERO FORMULA ..............
+% Nota. [Macro da sviluppare]
+% Visualizza una formula distante "\eqindent" dal bordo sinistro, avente un numero
+% qualsiasi di colonne e con la numerazione a destra.
+% Sintassi :
+%    \lmathf{%
+%       \advancemathno\setmathlabel{ffirst}
+%       \putmathno &-\Delta u = &f\qquad &\hbox{nell'aperto }\Omega\cr
+%       \advancemathno\setmathlabel{fsecond}
+%       \putmathno &u+\partial_\nu u = &g\qquad &\hbox{sul bordo }\partial\Omega\cr}
+%  
+\def\!eqindent{\parindent}
+\def\lmathf#1{%
+    \bigskip\vbox{%
+        \openup1\jot\mathsurround = 0pt%
+        \halign{%
+            \hskip\hsize\hskip-\rightskip\hfil\llap{##}%
+            \hskip\rightskip\hskip-\hsize\hskip\leftskip\hskip\!eqindent%
+            &\strut\hfil$\displaystyle{{}##}$&&\strut%
+            $\displaystyle##$\hfil\crcr#1\crcr}}\bigskip}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (13) %%% MACRO e DEFINIZIONI MATEMATICHE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\message{More about math...}
+%
+%  .(1) %%% stile lettere per simboli di reale, complesso, ecc .....................
+% \def\mdouble#1{\mathop{\cc\uppercase{#1}}\nolimits}       % solo lettere maiuscole
+\def\mdouble#1{\hbox{\cc\uppercase{#1}}}
+\def\CC{\mdouble{C}}                                              % numeri complessi
+\def\RR{\mdouble{R}}                                              % numeri reali
+\def\ZZ{\mdouble{Z}}                                              % numeri int. rel.
+\def\NN{\mdouble{N}}                                              % numeri naturali
+%
+%  .(2) %%% derivate, derivate parziali e integrali doppi e tripli .................
+% Nota. Esempi: $\de x$,  $\dede \Omega$,  $\sin x\De x$,  $\DeDe x$
+%
+\def\dede#1{{\partial\over\partial{#1}}}      % derivata parziale (notazione estesa)
+\def\de#1{\partial_{#1}}                    % derivata parziale (notazione compatta)
+\def\De#1{\,d#1}                                  % incremento infinitesimo (estesa)
+\def\DeDe#1{\,{d\over{d#1}}}                    % derivata totale (notazione estesa)
+\def\iint{\int\!\!\!\int}                                         % integrale doppio 
+\def\iiint{\int\!\!\!\int\!\!\!\int}                              % integrale triplo
+%
+%  .(3) %%% delimitatori grafici quadrati (per fine dimostrazioni, etc.) ...........
+% Nota.
+% \nendpoint = normal square point
+% \bendpoint = big square point
+% \vendpoint = void square point
+%
+\def\!endpoint#1{\vrule height #1pt width #1pt depth 0pt}        % (opp.: depth 2pt)
+\def\nendpoint{\!endpoint{4}}
+\def\bendpoint{\!endpoint{7}}
+\def\!wbox#1/{%
+    \vbox{%
+        \hrule height 0.2pt%
+        \hbox{\vrule height#1 width 0.2pt\kern#1\vrule height#1 width 0.2pt}%
+        \hrule height 0.2pt}}
+\newbox\!boxendpoint\setbox\!boxendpoint = \hbox{\!wbox4pt/}
+\def\vendpoint{\copy\!boxendpoint}
+% memo. \def\sqr#1#2{\bgroup\vcenter{\vbox{\hrule height.#2pt
+% memo.     \hbox{\vrule width.#2pt height#1pt \kern#1pt\vrule width.#2pt}
+% memo.     \hrule height.#2pt}}\egroup}
+% memo. \def\square{\mathchoice\sqr34\sqr34\sqr{2.1}3\sqr{1.5}3}
+%
+%  .(4) %%% altre definizioni matematiche: \mchi, \defequal, frazioni, etc .........
+%  Nota.
+%  - \mchi
+%    E' una \chi che si trova piu' in alto nella riga rispetto alla \chi greca. 
+%    E' necessaria ad esempio in $f_1 \mchi_{\Omega}$.
+%  - \defequal
+%    scrive un uguale con "def" sopra, senza che la riga aumenti di spessore (questo
+%    mediante \smash). Esempio: $[\mbold{A},\mbold{B}]\defequal\mbold{AB-BA}$.
+%  - \fract
+%    frazione di dimensione normale all'interno di una riga. Esempio: \fract5/8
+%  - \smallfract
+%    frazione di dimensione ridotta all'interno di una riga. Esempio: \smallfract5/8
+%  - \legendre
+%    simbolo di Legendre. Esempio: ${a\legendre b}$
+%  - \euler
+%    simbolo di Euler. Esempio: ${a\euler b}$
+%  - \norm
+%    Esempio: $\norm{f_1}_{L^2(\Omega)}$
+\def\mchi{\setbox0=\hbox{$\mathsurround=0pt\chi$}\hbox{\raise\dp0\copy0}}
+\def\defequal{\>\smash{\scriptstyle\mathop=\limits^{\hbox{\fiverm def}}}\>}
+\def\fract#1/#2{{#1\over#2}}
+\def\smallfract#1/#2{%
+    \leavevmode\kern.1em\raise.5ex\hbox{\the\scriptfont0 #1}\kern-.1em
+    /\kern-.15em\lower.25ex\hbox{\the\scriptfont0 #2}}
+\def\half{{1\over 2}}
+\def\legendre{\overwithdelims()}
+\def\euler{\atopwithdelims<>}
+\def\norm#1{\left\Vert#1\right\Vert} \let\norma = \norm
+%
+%  .(5) %%% altre definizioni ed abbreviazioni matematiche .........................
+\def\eps{\varepsilon}
+\def\perogni{\quad{\rm per\ ogni\ }}
+\def\llimsup{\mathop{\overline{\rm lim}}}          % lim con linea orizzontale sopra
+\def\lliminf{\mathop{\underline{\rm lim}}}         % lim con linea orizzontale sotto
+\def\lip{lip\-schit\-zian}       % l'ultima vocale a carico dell'utente : es. \lip o
+\def\esim#1#2{\bgroup\mathsurround=0pt$#2-{}$esim#1\egroup} % es.\esim ok -> k-esimo
+\def\upla#1{\bgroup\mathsurround=0pt$#1-{}$upla\egroup}     % es.\upla n -> n-upla
+\def\val#1,#2/{\langle#1,#2\rangle}
+%
+%  .(6) %%% definizione e ridefinizione di alcuni simboli (caratteri ams) ..........
+\def\undefine#1{\let#1\undefined}
+\def\!hexnumber#1{%
+    \ifcase#1 0\or 1\or 2\or 3\or 4\or 5\or 6\or 7\or 8\or9
+        \or A\or B\or C\or D\or E\or F\fi}
+\def\newsymbol#1#2#3#4{%
+    \mathchardef#1 = "#2\!msafam#3#4}
+\edef\!msafam{\!hexnumber\msafam}    % numero della famiglia dei font in esadecimale
+%
+%    ..(1) %%% quadrati con o senza simboli all'interno ............................
+\newsymbol\blacksquare 004        % quadrato nero pieno
+\newsymbol\boxdot 200             % quadrato con punto centrale
+\newsymbol\boxminus 20C           % quadrato con meno centrale
+\newsymbol\boxplus 201            % quadrato con piu' centrale
+\newsymbol\boxtimes 202           % quadrato con per centrale
+\newsymbol\square 003             % quadrato nero vuoto
+\newsymbol\blackdiamond 007       % simbolo \diamont nero pieno
+%
+%    ..(2) %%% triangoli pieni e vuoti .............................................
+\newsymbol\vartriangleright 342
+\newsymbol\vartriangleleft 343
+\newsymbol\trianglerighteq 344
+\newsymbol\trianglelefteq 345
+\newsymbol\blacktriangledown 048
+\newsymbol\blacktriangleright 349
+\newsymbol\blacktriangleleft 34A
+\newsymbol\vartriangle 34D
+\newsymbol\blacktriangle 04E
+\newsymbol\triangledown 04F
+%
+%    ..(3) %%% cerchi vuoti con simboli all'interno ................................
+\newsymbol\circledcirc 27D
+\newsymbol\circledast 27E
+\newsymbol\circleddash 27F
+\newsymbol\circledS 073
+%
+%    ..(4) %%% frecce circolari, orizzontali e verticali ...........................
+\newsymbol\circlearrowright 308   % freccia in circolo (verso orario)
+\newsymbol\circlearrowleft 309    % freccia in circolo (verso orario)
+\newsymbol\leftrightharpoons 30B  % doppia freccia
+\newsymbol\rightleftharpoons 30A  % doppia freccia
+\newsymbol\twoheadrightarrow 310
+\newsymbol\twoheadleftarrow 311
+\newsymbol\leftleftarrows 312
+\newsymbol\rightrightarrows 313
+\newsymbol\upuparrows 314
+\newsymbol\downdownarrows 315
+\newsymbol\upharpoonright 316
+\newsymbol\downharpoonright 317
+\newsymbol\upharpoonleft 318
+\newsymbol\downharpoonleft 319
+\newsymbol\rightarrowtail 31A
+\newsymbol\leftarrowtail 31B
+\newsymbol\leftrightarrows 31C
+\newsymbol\rightleftarrows 31D
+\newsymbol\Lsh 31E
+\newsymbol\Rsh 31F
+\newsymbol\rightsquigarrow 320
+\newsymbol\leftrightsquigarrow 321
+\newsymbol\looparrowleft 322
+\newsymbol\looparrowright 323
+\newsymbol\Rrightarrow 356        % tripla freccia
+\newsymbol\Lleftarrow 357         % tripla freccia
+%
+%    ..(5) %%% simboli di maggiore (uguale), minore (uguale) .......................
+\newsymbol\lessgtr 337            % maggiore + minore
+\newsymbol\gtrless 33F            % minore + maggiore 
+\newsymbol\gtreqless 352
+\newsymbol\gtreqqless 354
+\newsymbol\lesseqgtr 351
+\newsymbol\lesseqqgtr 353
+%
+\newsymbol\geqslant 33E           % maggiore uguale
+    \let\geq = \geqslant
+\newsymbol\succsim 325
+\newsymbol\gtrsim 326
+\newsymbol\gtrapprox 327
+\newsymbol\eqslantgtr 331         % maggiore uquale rovesciato
+\newsymbol\curlyeqsucc 333
+\newsymbol\succcurlyeq 33C
+\newsymbol\gggtr 36F              % triplo maggiore
+%
+\newsymbol\leqslant 336           % minore uguale
+    \let\leq = \leqslant
+\newsymbol\precsim 32D
+\newsymbol\lesssim 32E
+\newsymbol\lessapprox 32F
+\newsymbol\eqslantless 330        % minore uquale rovesciato
+\newsymbol\curlyeqprec 332
+\newsymbol\preccurlyeq 334
+\newsymbol\llless 36E             % triplo minore
+%
+%    ..(6) %%% simboli di uguale ...................................................
+\newsymbol\circeq 324              % uguale con pallino sopra
+\newsymbol\triangleq 32C           % uguale con triangolo sopra
+\newsymbol\doteqdot 32B            % uguale con punto sopra e sotto
+\newsymbol\risingdotseq 33A
+\newsymbol\fallingdotseq 33B
+\newsymbol\eqcirc 350
+\newsymbol\backsimeq 377           % circa uguale
+\newsymbol\backsim 376             % circa
+\newsymbol\bumpeq 36C
+\newsymbol\Bumpeq 36D
+%
+%    ..(7) %%% simboli insiemistici .................................................
+\newsymbol\sqsubset 340
+\newsymbol\sqsupset 341
+\newsymbol\complement 07B          % complementare insiemistico
+\newsymbol\Subset 362
+\newsymbol\Supset 363
+\newsymbol\Cup 264
+    \let\doublecup\Cup
+\newsymbol\Cap 265
+    \let\doublecap\Cap
+\newsymbol\veebar 259
+\newsymbol\barwedge 25A
+\newsymbol\doublebarwedge 25B
+\newsymbol\curlywedge 266
+\newsymbol\curlyvee 267
+\newsymbol\pitchfork 374
+%
+%    ..(8) %%% altri simboli .......................................................
+\newsymbol\smallsmile 360
+\newsymbol\smallfrown 361
+\undefine\angle \newsymbol\angle 05C
+\newsymbol\measuredangle 05D
+\newsymbol\sphericalangle 05E
+\newsymbol\bigstar 046
+\newsymbol\varpropto 35F           % direttamente proporzionale
+\newsymbol\dotplus 275
+\newsymbol\between 347
+\newsymbol\intercal 27C
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (14) %%% MACRO e DEFINIZIONI NON MATEMATICHE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\message{Not mathematical definitions and macros...}
+%
+%  .(1) %%% punto quadrato per punti di tabulazione ................................
+\def\squarept{\raise0.15ex\hbox{\vrule height 2.5pt width 2.5pt depth 0pt}}
+%
+%  .(2) %%% definizione per la doppie virgolette aperte e chiuse automatiche .......
+% Nota. In "parola" la prima " e' aperta e la seconda e' chiusa (automaticamente)
+% (Rimossa per effetti collaterali)
+% \newif\if!opendq\!opendqtrue
+% \catcode`\" = \active
+% \def"{\if!opendq``\global\!opendqfalse\else''\global\!opendqtrue\fi}
+%
+%  .(3) %%% macro per NASCONDERE PORZIONI DI TESTO .................................
+% Nota. Sintassi: \hidetext ...testo da nascondere... \endht
+% (NB. Correggere l'indentazione del testo seguente, se risultasse necessario).
+\long\def\hidetext#1\endht{%            % "\long" per poter includere piu' paragrafi
+    \!wlog{. . . . . . . . . Watch out: hide text!}}
+%
+%  .(4) %%% definizioni di parentesi quadre utili per bibliografia .................
+\newbox\osqrbracket \newbox\csqrbracket
+\setbox\osqrbracket =
+    \hbox{\hskip.5pt\lower2pt\hbox{\vbox{\hrule height.3pt%
+    \hbox{\vrule height9pt width.3pt\hskip2.5pt}\hrule height.3pt}}}
+\setbox\csqrbracket =
+    \hbox{\lower2pt\hbox{\vbox{\hrule height.3pt%
+    \hbox{\hskip2.5pt\vrule height9pt width.3pt}\hrule height.3pt}}\hskip.5pt}
+% memo. \catcode`\[=13 \def[{\copy\osqrbracket}      % in conflitto con altre macro!
+% memo. \catcode`\]=13 \def]{\copy\csqrbracket}      % come sopra
+%
+%  .(5) %%% macro per RACCHIUDERE TESTO IN UN BOX ..................................
+\def\boxedtext#1{%
+    \vbox{%
+        \hrule%
+        \hbox{\vrule\vbox{\vskip3pt\hbox{\hskip3pt#1\hskip3pt}\vskip3pt}\vrule}%
+        \hrule}}
+%
+%  .(6) %%% DATA e TEMPO di sistema (nelle lingue supportate) ......................
+% Nota. Elenco e significato delle macro di questo sottogruppo
+%    \today     = data
+%    \thetime   = ora
+%    \writeTime = data ed ora
+%
+\def\today{%       % non ho usato "\ifcase" per selezionare le lingue per rendere...
+    \ifx\!language\!italian%    % ...il tutto indipendente dal parametro "\language"
+        \the\day\space\ifcase\month%
+            \or gennaio\or febbraio\or marzo\or aprile\or maggio\or giugno%
+            \or luglio\or agosto\or settembre\or ottobre\or novembre\or dicembre\fi%
+    \else%
+        \ifx\!language\!french%
+            \the\day\space\ifcase\month%
+                \or Janvier\or Février\or Mars\or Avril\or Mai\or Juin\or Juillet%
+                \or Ao\^{u}t\or Septembre\or Octobre\or Novembre\or Décembre\fi%
+        \else%
+            \ifx\!language\!english%
+                \ifcase\month%
+                    \or January\or February\or March\or April\or May\or June%
+                    \or July\or August\or September\or October\or November%
+                    \or December\fi
+                \space\the\day,\fi\fi\fi%
+    \space\number\year}
+\newcount\!hours\newcount\!minutes%
+\def\!setTime{%
+    \!hours = \time\global\divide\!hours by 60%
+    \!minutes = \!hours\multiply\!minutes by 60\advance\!minutes by -\time%
+    \global\multiply\!minutes by -1}
+\!setTime%
+\def\thetime{%
+    \ifx\!language\!english
+        \ifnum\!hours < 12 %                          % LASCIARE lo spazio dopo "12"
+            \the\!hours:\ifnum\!minutes < 10 0\fi\number\!minutes\thinspace a.m.%
+        \else%
+            \global\advance\!hours by -12
+            \the\!hours:\ifnum\!minutes < 10 0\fi\number\!minutes\thinspace p.m.\fi%
+    \else\the\!hours:\ifnum\!minutes < 10 0\fi\number\!minutes\fi}
+\def\writetime{\today\quad\thetime}
+%
+%   .(7) %%% definizioni legate a "\llap" e "\rlap" ................................
+\def\dlap#1{\vbox to 0pt{#1\vss}}                            % spinge verso il basso
+\def\ulap#1{\vbox to 0pt{\vss#1}}                              % spinge verso l'alto
+\def\vclap#1{\vbox to 0pt{\vss#1\vss}}                         % centra in verticale
+\def\hclap#1{\vbox to 0pt{\hss#1\hss}}                       % centra in orizzontale
+\def\clap#1{\vbox to 0pt{\vss\hbox to 0pt{\hss#1\hss}\vss}}  % centra in entrambe...
+%                                                                  % ...le direzioni
+%   .(8) %%% altre abbreviazioni e macro ...........................................
+\def\newline{\hfill\break}
+\def\newpage{\par\vfill\supereject}
+\def\emptyline{\break\hbox{}\hfil\break}
+\def\emptypage{\vfill\eject\ \vfill\eject}
+\def\!dash#1{\nobreak\thinspace#1\penalty0\thinspace}
+\def\dash{\!dash{--}} 
+\def\Dash{\!dash{---}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (15) %%% definizioni per l'inserimento di immagini bmp, eps, ps, wmf %%%%%%%%%%%%%
+\message{Macros to insert bmp, eps, ps, wmf images...}
+%
+% Nota. Macro: "centerbmp", "ncenterbmp" (e analoghe per gli altri formati grafici).
+% - "\centerbmp{<larghezza>}{<altezza>}{<path+nomefile>}"
+%   CENTRA L'IMMAGINE IN ORIZZONTALE e la SCALA opportunamente rendendola delle
+%   dimensioni date come parametri (il paramentro "<path>" (usare / invece di \) e'
+%   opzionale).
+%   Settare prima il parametro \hcorrection se la figura non risultasse centrata in
+%   orizzontale. Il valore di default e' \hcorrection = 0pt e tale valore viene
+%   ripristinato ad ogni fine inserimento di figura.
+%   Esempio:
+%      \hcorrection = .4em
+%      \bigskip\centerbmp{3cm}{3cm}{c:/pctex32/tesi/unito.bmp}\bigskip
+%
+% - "\ncenterbmp{<larghezza>}{<altezza>}{<path+nomefile>}{Testo di commento}"
+%   Funziona come "\centerbmp" ed in piu' scrive "Fig." + numero figura + Testo di
+%   commento, centrati sotto la figura. 
+%   Gli spazi verticali sopra e sotto la figura sono automatici, ma potrebbero 
+%   essere necessarie correzioni tramite \vskip (eventualmente con valore negativo).
+%   Esempio:
+%      \hcorrection = .4em
+%      \ncenterbmp{3cm}{3cm}{unito.bmp}{Logo dell'Universit\`a}
+%
+\def\ncenterbmp#1#2#3#4{\!ncenter{#1}{#2}{#3}{#4}{bmp}}
+\def\ncentereps#1#2#3#4{\!ncenter{#1}{#2}{#3}{#4}{eps}}
+\def\ncenterps#1#2#3#4{\!ncenter{#1}{#2}{#3}{#4}{ps}}
+\def\ncenterwmf#1#2#3#4{\!ncenter{#1}{#2}{#3}{#4}{wmf}}
+\def\centerbmp#1#2#3{\!center{#1}{#2}{#3}{bmp}}
+\def\centereps#1#2#3{\!center{#1}{#2}{#3}{eps}}
+\def\centerps#1#2#3{\!center{#1}{#2}{#3}{ps}}
+\def\centerwmf#1#2#3{\!center{#1}{#2}{#3}{wmf}}
+\newdimen\hcorrection\hcorrection = 0pt % correzione orizz. di posizionamento figura
+\newdimen\legendoffset\legendoffset = \bigskipamount   % spazio tra figura e legenda
+\def\!center#1#2#3#4{%
+    \!wlog{. . . . . . . . Figure \string{#3\string}}
+    \vskip#2%
+%   \hbox to\!pagewidth{%
+%       \hss\hskip\hcorrection\hbox to#1{\special{#4:#3 x=#1,y=#2}\hfil}\hss}
+    \centerline{%
+        \hskip\hcorrection\relax%
+        \hbox to#1{\special{#4:#3 x=#1, y=#2}\hfil}}
+    \global\hcorrection = 0pt     % ripristino valore default correzione orizzontale
+    \bigskip\ignorespaces}
+\newdimen\!nnotelen
+\def\!ncenter#1#2#3#4#5{%
+    \global\advance\!nfigure by 1
+    \!wlog{. . . . . . . . Figure\space\the\!nchapter.\the\!nfigure\space%
+        \string{#3\string}}
+    \smallskip\vskip#2\relax%
+%   \hbox to\!pagewidth{%
+%       \hss\hskip\hcorrection\relax%
+%       \hbox to#1{\special{#5:#3 x=#1,y=#2}\hfil}\hss}
+    \centerline{%
+        \hskip\hcorrection\relax%
+        \hbox to#1{\special{#5:#3 x=#1, y=#2}\hfil}}
+    \global\hcorrection = 0pt     % ripristino valore default correzione orizzontale
+    \vskip\legendoffset\!putlegend{#4}\medskip\bigskip\ignorespaces}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (16) %%% modifica delle ROUTINE DI OUTPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\message{Redefinition of output routines...}
+%
+% Nota tecnica.
+% "\noheadandfootlines" : fa si che non compaiano gli elementi "\headline",
+%     "\footline" e numerazione di pagina, nelle pagine a partire dal punto in cui
+%     e' inserita la macro,
+% "\putheadandfootlines": ripristina la situazione di default, cioe' inserisce
+%     nuovamente "\headline" e "\footline".
+%
+\newif\ifno!head!footlines\no!head!footlinesfalse
+\def\noheadandfootlines{\global\no!head!footlinestrue}
+\def\putheadandfootlines{\global\no!head!footlinesfalse}
+\catcode`@ = 11
+\output{\easyTeXoutput}
+\def\easyTeXoutput{%
+    \shipout
+    \ifno!head!footlines\vbox{\pagebody}%
+    \else\vbox{\makeheadline\pagebody\makefootline}\advancepageno\fi
+    \ifnum\outputpenalty > -\@MM \else\dosupereject\fi}
+\def\pagebody{\vbox to\vsize{\boxmaxdepth\maxdepth\pagecontents}}
+\def\makeheadline{%
+    \if!slide\else                         % nessuna "\headline" nel formato "slide"
+    \vbox to\z@{%
+        \vskip-22.5\p@\line{\vbox to8.5\p@{}\the\headline}\vss}\nointerlineskip\fi}
+\def\makefootline{%
+    \baselineskip24\p@
+    \if!slide\vskip1.2cm\line{\eightsf\hss\the\pageno\qquad}
+    \else\line{\the\footline}\fi}
+\def\dosupereject{%
+    \ifnum\insertpenalties > \z@\line{}\kern-\topskip\nobreak\vfill\supereject\fi}
+\def\pagecontents{%
+    \ifvoid\topins\else\unvbox\topins\fi
+    \dimen@ = \dp\@cclv\unvbox\@cclv                               % open up \box255
+    \ifvoid\footins\else%                          % non c'e' una nota a pie' pagina
+        \if!slide\else\vskip\skip\footins\footnoterule\unvbox\footins\fi\fi
+    \ifr@ggedbottom\kern-\dimen@\vfil\fi}
+\catcode`@ = 12
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\!wlog{End of file \macro!filename}
+\catcode`! = 12            % rimettiamo le cose a posto prima di chiudere baracca...
+
+%%% fine del file easyTeX.sty %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% by MDTeX!96!99 %%%

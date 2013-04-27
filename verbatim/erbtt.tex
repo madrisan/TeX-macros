@@ -1,0 +1,237 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% @TeX-file{
+%    author            = "Davide MADRISAN",
+%    filename          = "verbtt.tex",
+%    version           = "3.4b",
+%    date              = "16/Mag/1999",
+%    copyright         = "This file copyright by Davide Madrisan",
+%    codetable         = "ISO/ASCII",
+%    checksumtype      = "line count",
+%    checksum          = "237",
+%    dependencies      = "plain.tex",
+%    abstract          = "This package implements a verbatim environment. It is
+%                         intended to offer a good interface to programmers that
+%                         need to insert verbatim text or files into TeX documents".
+% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% RESTRICTIONS: the verbatim macros are provided free of charge without warranty of
+% any kind. They may be distributed freely provided that the recipients also acquire
+% the right to distribute them freely. The notices to this effect must be preserved
+% when the files are distributed. If you want to change something, change the 
+% filename from 'verbtt.tex' to something else and indicate any changes in the file
+% itself, or else remove my name from the file completely.
+
+\def\shouldbefmt{plain}        % controllo precauzionale del formato di compilazione
+\newlinechar = `\^^J
+\def\lookatformat{                   % this package requires plain TeX to run safety
+    \ifx\shouldbefmt\fmtname%
+    \else\immediate\write16{^^J%
+        > !OOPS... warning! - I'm not running under Plain TeX!^^J}\fi}\lookatformat
+
+% (1) %%% verbatim environment for \tt (Computer Modern) fonts %%%%%%%%%%%%%%%%%%%%%
+% Esempio d'uso della macro verbatim:
+%
+%    Qualsiasi testo che si richiede venga formattato da \TeX.
+%    \verbatim
+%    matrix::~matrix() { // distruttore della classe matrix
+%       if(--p->n == 0) { // se il contatore di riferimenti diventa 0
+%          for(int r = 0; r < rows(); r++)
+%             delete p->m[r];
+%          delete p->m;
+%          delete p;
+%       }
+%    }
+%    @endverbatim
+%    \noindent Ritorno al trattamento di default del testo.
+% 
+% L'ambiente verbatim permette l'inserimento in documenti TeX di testo comprendente
+% anche i caratteri speciali TeX, che si desidera vengano trattati da TeX in modo
+% letterale, cioe' non interpretati. I caratteri supportati dall'ambiente verbatim
+% sono riportati nella seguente tabella:
+%
+%    carattere    \catcode    funzione
+%   ------------------------------------------------------------------------
+%     `\\            0         backslash is TeX escape character
+%     `\{            1         left brace is begin-group character
+%     `\}            2         right brace is end-group character
+%     `\$            3         dollar sign is math shift
+%     `\&            4         ampersand is alignment tab
+%     `\^^M          5         ascii return is end-line
+%     `\#            6         hash mark is macro parameter character
+%     `\^   `\^^K    7         circumflex and uparrow are for superscripts
+%     `\_   `\^^A    8         underline and downarrow are for subscripts
+%     `\^^I `\      10         ascii tab and ascii space are blank spaces
+%     `\~           13         tilde
+%     `\%           14         percent sign is comment character
+%
+% Per impedire a TeX di considerare questi caratteri come speciali ho modificato i
+% loro '\catcode', impostandoli tutti al valore '12'. Per far questo in blocco ho
+% utilizzato la macro plain-TeX '\dospecials':
+%
+%    \def\dospecials{%
+%       \do\ \do\\\do\{\do\}\do\$\do\&\do\#\do\^\do\^^K\do\_\do\^^A\do\%\do\~}
+%
+% In essa sono elencati i carattere speciali, preceduti dal comando '\do', che ho
+% definito (localmente) in '\uncatcodespecials' in modo da effettuare con tale macro
+% la conversione dei '\catcode' come indicato sopra:
+%
+%   \chardef\other = 12 % '\other' e' ora sinonimo di '12'
+%   \def\uncatcodespecials{\def\do##1{\catcode`##1 = \other}\dospecials}
+%
+% Per quando riguarda i caratteri restanti (tabulazione e return) ho usato la linee:
+%
+%   \chardef\active = 13 % (definito in 'plain.tex')
+%   \def\makeactive#1{\catcode`#1 = \active\ignorespaces}
+%
+%   \bgroup      % il gruppo delimita le linee di testo in cui sono attivi ^^M e ^^I
+%       \makeactive\^^M \makeactive\^^I %
+%       \gdef\setupverbatim{%
+%           \makeactive\^^M \let^^M = \newline%
+%           \makeactive\^^I \let^^I = \tabtospaces        % conversione tab in spazi
+%           \catcode`\@ = 0 \uncatcodespecials%
+%           \parskip = 0pt \baselineskip = \verbatimbaselineskip        % interlinea
+%           \obeyspaces\frenchspacing}                         % spaziatura francese
+%   \egroup
+%
+% Esse definiscono globalmente ('\gdef') la macro '\setupverbatim', che si occupa di
+% rendere letterale il trattamento dei caratteri di spaziatura (cioe' di inserire
+% nel file DVI gli spazi nelle quantita' e modalita' indicate nel testo verbatim),
+% di cambiare il '\catcode' dei due caratteri al valore '\active' e di ridefinire i
+% caratteri '^^M' (return) e '^^I' (tab) rendendoli rispettivamente sinonimi di
+% '\newline' e '\tabtospaces'.
+% Le definizioni seguenti sono naturalmente personalizzabili:
+%
+%   \def\newline{\endgraf\noindent}
+%   {\obeyspaces\gdef\tabtospaces{\ \ \ }} % un tab equivale a 3 spazi
+% 
+% ad esempio:
+%
+%   \def\newline{\endgraf\indent}
+%
+% indica a TeX di indentare le linee verbatim, mentre:
+%
+%   \newcount\linenum\linenum = 0 % contatore per numerazione linee listato
+%   \def\newline{%
+%       \advance\linenum by 1
+%       \endgraf\noindent\leavevmode\llap{\sevenrm\the\linenum.\ \ }}
+%
+% numera (in modo progressivo, iniziando da 1) le linee del testo verbatim (!).
+% Le restanti linee del blocco '\bgroup' .. '\egroup' prededente:
+%
+%    \catcode`\@ = 0
+%    \parskip = 0pt \baselineskip = \verbatimbaselineskip
+%    \obeyspaces\frenchspacing
+% 
+% settano le modalita' di spaziatura e l'interlinea del testo verbatim.
+% A questo proposito, '\verbatimbaselineskip' e' uno dei parametri personalizzabili,
+% ad esempio:
+%
+%   \verbatimbaselineskip = .95\verbatimbaselineskip
+%
+% riduce l'interlinea del testo verbatim del 5% rispetto al valore TeX corrente.
+% oppure:
+%
+%   \verbatimbaselineskip = 10pt plus .1pt minus .1pt
+%
+% fissa l'interlinea del testo verbatim a 10pt a meno di un aggiustamento positivo o
+% negativo pari ad un massimo di .1pt. Si noti che questa liberta' di spaziatura 
+% verticale data a TeX sana l'errore di 'underfull \vbox' che altrimento si avrebbe
+% ad ogni pagina del testo verbatim.
+%
+% IMPORTANTE! L'istruzione:
+%
+%   \catcode`\@ = 0
+%
+% indica a TeX che all'interno dell'ambiente verbatim il carattere escape e' "@",
+% non "\". Per questo motivo occorre utilizzare il comando "@endverbatim" per 
+% chiudere il blocco verbatim e non "\endverbatim". 
+% In verbatim i comandi sono dunque per TeX tutte e sole le stringhe di caratteri
+% che iniziano con il carattere "@" (essi vanno utilizzati pero' con alcune cautele,
+% specialmente nei riguardi del trattamento della spaziatura...)
+% Un esempio di comando di frequente utilizzo e' '@eject' oppure '@vfill@eject' che
+% permettono di passare alla pagina successiva del documento, nel secondo caso dopo
+% aver riempito di spazio verticale la parte finale della pagina (nota: non lasciare
+% righe vuote dopo questo comando altrimenti esse verranno inserite all'inizio della
+% pagina seguente!).
+% Ancora, per inserire un file testo esterno si puo' procedere come segue:
+%
+%    \verbatim[\tentt]
+%    @input file.txt 
+%    @endverbatim
+%
+% oppure:
+%
+%    \def\inputverbatimfile{\input c:/listato.cpp}
+%    \verbatim[\tentt]
+%    @inputverbatimfile 
+%    @endverbatim
+%
+% Il carattere '@' come detto e' un carattere speciale. Se occorre inserirlo
+% all'interno del testo verbatim bisogna utilizzare la coppia di caratteri "@@"
+% (vedi definizione '\def\@{@}').
+% Consideriamo ora le linee di codice dell'ambiente verbatim:
+%
+%    \def\verbatim{%
+%        \endgraf\bgroup\the\everyverbatimbegin\setupverbatim\verbatimfont}
+%    \def\endverbatim{\egroup\removelastbox\endgraf{\the\everyverbatimend}}
+%  
+% Il comando '\verbatimfont' imposta il tipo di font che TeX utilizzera' nel blocco
+% verbatim. Tale definizione e' ovviamente personalizzabile, ad esempio:
+%
+%    \def\verbatimfont = cmtt9
+%
+% indica a TeX di utilizzare il font della famiglia '\tt', a 9pt.
+% L'istruzione '\removelastbox' indica a TeX di eliminare l'ultimo carattere '^^M'
+% del blocco verbatim, che avrebbe l'effetto di introdurre una linea vuota non
+% richiesta dopo le linee verbatim.
+% In ultimo, i due token: '\everyverbatimbegin' e '\everyverbatimend' permettono di
+% rendere automatiche azioni TeX da effettuarsi rispettivamente all'inizio ed alla
+% fine del blocco verbatim, ad esempio:
+%       
+%    \everyverbatimbegin = {
+%        % riduzione interlinea del 5% + '\bigskip'
+%        \verbatimbaselineskip = .95\verbatimbaselineskip\bigskip}
+%        % utilizzo in verbatim del font typewriter (famiglia \tt) a 9pt
+%        \font\verbatimfont = cmtt9}
+%    \everyverbatimend = {%
+%        \medskip\centerline{$\diamond\quad\diamond\quad\diamond$}\bigskip}
+%
+% permettono rispettivamente l'inserimento di un '\bigskip' prima di ogni blocco
+% verbatim e di un segno grafico seguito da '\bigskip' alla fine di ogni blocco.
+% Viene anche selezionato il tipo di carattere da utilizzarsi nelle linee di testo
+% verbatim (al posto del carattere di default '\tt').
+%
+% Per un esempio si veda il file 'verbtest.tex'.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% by MD!99 %%%
+
+\chardef\other = 12
+\def\makeactive#1{\catcode`#1 = \active\ignorespaces}
+\def\uncatcodespecials{\def\do##1{\catcode`##1 = \other}\dospecials}
+\def\removelastbox{\setbox0 = \lastbox}
+
+\def\newline{\endgraf\noindent}                % definizione end-line (modificabile)
+{\obeyspaces\gdef\tabtospaces{\ \ \ }}    % un tab equivale a 3 spazi (modificabile)
+
+% azioni da eseguire ad ogni inizio e fine blocco verbatim (default = nessuna)
+\newtoks\everyverbatimbegin\everyverbatimbegin = {\relax}           % (modificabile)
+\newtoks\everyverbatimend\everyverbatimend = {\relax}               % (modificabile)
+% interlinea del testo verbatim (settata al valore corrente)
+\newskip\verbatimbaselineskip\verbatimbaselineskip = \baselineskip  % (modificabile)
+% font utilizzato nel blocco verbatim (valore di default)
+\let\verbatimfont = \tt                                             % (modificabile)
+
+\bgroup          % il gruppo delimita le linee di testo in cui sono attivi ^^M e ^^I
+    \makeactive\^^M \makeactive\^^I %
+    \gdef\setupverbatim{%
+        \makeactive\^^M \let^^M = \newline                       % ridefinizione ^^M
+        \makeactive\^^I \let^^I = \tabtospaces            % conversione tab in spazi
+        \catcode`\@ = 0 \uncatcodespecials                       % modifica \catcode
+        \parskip = 0pt \baselineskip = \verbatimbaselineskip            % interlinea
+        \obeyspaces\frenchspacing}                             % spaziatura francese
+\egroup
+\def\@{@}              % in verbatim il carattere "@" si ottiene con la stringa "@@"
+
+\def\verbatim{\endgraf\bgroup\the\everyverbatimbegin\setupverbatim\verbatimfont}
+\def\endverbatim{\egroup\removelastbox\endgraf{\the\everyverbatimend}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

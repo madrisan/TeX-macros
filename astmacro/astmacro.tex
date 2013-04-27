@@ -1,0 +1,811 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TeX-file{
+%    author            = "Davide MADRISAN",
+%    filename          = "astmacro.tex",
+%    version           = "2.0"
+%    internal number   = "01c"
+%    date              = "10/Jun/1998",
+%    last revision     = "05/May/1999",
+%    copyright         = "This file copyright by Davide Madrisan.
+%                         It's provided free of charge without warranty of any kind.
+%                         It may be distributed freely provided that the recipients
+%                         also acquire the right to distribute it freely.
+%                         The notices to this effect must be preserved when the file
+%                         is distributed.
+%                         If you want to change something, change the filename from
+%                         'astmacro.tex' to something else and indicate any changes
+%                         in the file itself, or else remove my name from the file
+%                         completely",
+%    codetable         = "ISO ASCII / Windows Latin 1 (subsections 2.7, 2.8)",
+%    checksumtype      = "line count",
+%    checksum          = "808",
+%    dependencies      = "plain.tex",
+%    abstract          = "This file is a collection of macros for typesetting papers
+%                         ('Atti', 'Memorie', etc) in the format defined by the
+%                         'Accademia delle Scienze di Torino'.
+%                         These macros simulate the MS-Word typesetting style.
+%                         That's why, by default, they replace the Computer Modern
+%                         fonts by the True-Type fonts Times New Roman (not the ones
+%                         used in mathematical styles)".
+% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (0) %%% PRELIMINARY BUSINESS (FORMAT, OUTPUT ON FILE .LOG, ETC.) %%%%%%%%%%%%%%%%%
+%  .(1) %%% save the current catcode of '!' and '@' ................................
+\xdef\recoverExclaimCode{\catcode`\noexpand\! = \the\catcode`\!}
+\xdef\recoverAtCode{\catcode`\noexpand\@ = \the\catcode`\@}
+\catcode`! = 11                     % in order to define 'private' control sequences
+\def\!restoreDefaults{\recoverExclaimCode \let\recoverExclaimCode\undefined}
+%
+%  .(2) %%% macros to load 'astmacro.tex' only once ................................
+\newlinechar = `\^^J
+\ifx\!astMacrosLoaded\undefined\let\next\relax \let\!astMacrosLoaded\relax
+\else\message{^^J%
+    !OOPS... astmacro.tex already loaded (duplicate loading process skipped)^^J^^J}%
+    \gdef\next{\!restoreDefaults\endinput}\fi\next
+%
+%  .(3) %%% astmacro logo, format and '\everyjob' macros ...........................
+\def\wlog{} \def\!wlog{\immediate\write16}   % to direct output on \jobname.log file
+\def\!fmtname{ASTmacro}                       % identifies the current format and...
+\def\!fmtversion{1.8.03p}                                        % ...version number
+\def\ASTmacros{%
+    A\kern-.4pt\lower2pt\hbox{S}\kern-1pt T\kern-.8pt-\kern1pt {\sl macros\/}%
+    \raise.3em\hbox{\sixrm\copyright}}
+\def\!logo{\!wlog{^^J%             % astmacro.tex logo (output on file \jobname.log)
+    > \!fmtname, version \!fmtversion\space -- by Davide MADRISAN^^J%
+    > a TeX-macro package written for the 'Accademia delle Scienze' of Torino^^J%
+    > to simulate MS-Word typesetting style (using the Times New Roman fonts)^^J^^J%
+    > Have a nice time with the 'astmacro.tex' facilities...^^J}}\!logo
+\def\!shouldbefmt{plain}
+\def\!lookatformat{                  % this package requires plain TeX to run safety
+    \ifx\!shouldbefmt\fmtname%
+    \else\!wlog{^^J%
+        !OOPS... warning! - I'm not running under Plain TeX!^^J%
+        This macro-package works at a very basic level when it treats fonts,^^J%
+        so you could find a lot of troubles during typesetting and/or in the^^J%
+        output file \jobname.dvi...^^J}\fi}\!lookatformat
+\everyjob{%               % the same in the case you're using the format file (.fmt)
+    \!logo\!lookatformat
+    \globaldefs = 0 \pageno = 1 \tracingstats = 1}
+%
+%  .(4) %%% (re)definition of some plain TeX macros and variables ..................
+\catcode`@ = 11
+\def\alloc@#1#2#3#4#5{%  redefinition of plain-Tex macro '\alloc@' (not outer vers.)
+    \global\advance\count1#1by\@ne
+    \ch@ck#1#4#2%                                     % make sure there's still room
+    \allocationnumber = \count1#1%
+    \global#3#5 = \allocationnumber}
+\def\!newfam{\alloc@8\fam\chardef\sixt@@n}       % not '\outer' version of '\newfam'
+\def\!newtoks{\alloc@5\toks\toksdef\@cclvi}     % not '\outer' version of '\newtoks'
+\recoverAtCode
+\pageno = 1                                           % the default page number is 1
+\globaldefs = 0                                        % local variables are allowed
+\tracingstats = 1                                          % TeX memory usage report
+%
+%  .(5) %%% logical switch and macros to select TTfonts or CMfonts .................
+\newif\if!wordstyle\!wordstyletrue                  % default = word style (TTfonts)
+\def\useTTfonts{\global\!wordstyletrue}
+\def\useCMfonts{\global\!wordstylefalse}
+%\useCMfonts     % decomment this line if you want to use CMfonts instead of TTfonts
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (1) %%% TEX'S PARAMETERS ABOUT PAGE FORMAT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\magnification\magstep 0  % no magnification
+\hsize        = 121mm     % line length for your page of text
+\vsize        = 180mm     % vertical page height
+\hoffset      =  20mm     % horizontal offset from the left edge
+\voffset      =  -2mm     % vertical offset from the top edge
+\topskip      =  20pt     % space between headline and first line of text
+\parindent    =   5mm     % width of the paragraph indentation.
+\parskip      =   0pt     % adjusts spacing between paragraphs
+\mathsurround =   0pt     % space around formulas which occur within a line of text
+\tolerance    =   400     % a bit more than Plain TeX because of page dimensions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (2) %%% DEFINITIONS ABOUT FONTS and GROUPS OF FONTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  .(1) %%% new families of fonts ..................................................
+\!newfam\scfam  % small cap family
+\!newfam\bsfam  % slanted boldface family
+\if!wordstyle
+    \!newfam\otfam\fi % original TeX family0 
+%
+%  .(2) %%% unslanted and slanted uppercase Greek letters ..........................
+% note. we give new \mathchardef's for the uppercase unslanted Greek letters, which
+% are now in family '\otfam' rather than family 0 (there are no Greek letters in
+% Times New Roman font). Since slanted uppercase Greek letters are no longer going
+% to be accessed by the '\mit' font change command, we introduce '\varGamma', ...,
+% '\varOmega' for the slanted uppercase Greek letters and we make them all ordinary
+% symbols (class 0) rather than 'variables' (class 7, as in plain TeX).
+\if!wordstyle
+    \!newfam\otfam % new fonts family for uppercase Greek letters (\!wordstyle only)
+    \def\!hexnumber#1{%
+        \ifcase#1 0\or 1\or 2\or 3\or 4\or 5\or 6\or 7\or 8\or 9
+            \or A\or B\or C\or D\or E\or F\fi}
+    \edef\!otfam{\!hexnumber\otfam}               % exadecimal number of font family
+    \mathchardef\Gamma   = "0\!otfam00       % family \otfam (original TeX family 0)
+    \mathchardef\Delta   = "0\!otfam01
+    \mathchardef\Theta   = "0\!otfam02
+    \mathchardef\Lambda  = "0\!otfam03
+    \mathchardef\Xi      = "0\!otfam04
+    \mathchardef\Pi      = "0\!otfam05
+    \mathchardef\Sigma   = "0\!otfam06
+    \mathchardef\Upsilon = "0\!otfam07
+    \mathchardef\Phi     = "0\!otfam08
+    \mathchardef\Psi     = "0\!otfam09
+    \mathchardef\Omega   = "0\!otfam0A
+    \let\mit=\undefined
+    \mathchardef\varGamma   = "0100                         % family 1 (math italic)
+    \mathchardef\varDelta   = "0101
+    \mathchardef\varTheta   = "0102
+    \mathchardef\varLambda  = "0103
+    \mathchardef\varXi      = "0104
+    \mathchardef\varPi      = "0105
+    \mathchardef\varSigma   = "0106
+    \mathchardef\varUpsilon = "0107
+    \mathchardef\varPhi     = "0108
+    \mathchardef\varPsi     = "0109
+    \mathchardef\varOmega   = "010A\fi
+%
+%  .(3) %%% the other changes needed for symbols used in math mode .................
+% note. math symbols and math accents in (plain) TeX family 0 now must be switched
+% to '\otfam' family to avoid problems in math mode: so we have to give new 
+% \delcode's as well as new \mathcode's, \mathchardef's, \mathaccent's and
+% \delimiter's.
+\if!wordstyle
+    \mathcode`\+ = "2\!otfam2B
+    \mathcode`\: = "3\!otfam3A  \mathchardef\colon = "6\!otfam3A
+    \mathcode`\= = "3\!otfam3D
+    \mathcode`\( = "4\!otfam28  \mathcode`\) = "5\!otfam29
+    \mathcode`\[ = "4\!otfam5B  \mathcode`\] = "5\!otfam5D
+    \mathcode`\! = "5\!otfam21
+    \mathcode`\? = "5\!otfam3F
+    \mathcode`\; = "6\!otfam3B
+    \delcode`\( = "\!otfam28300  \delcode`\) = "\!otfam29301
+    \delcode`\[ = "\!otfam5B302  \delcode`\] = "\!otfam5D303
+    \delcode`\/ = "\!otfam2F30E
+    \def\grave{\mathaccent"7\!otfam12 }  \def\acute{\mathaccent"7\!otfam13 }
+    \def\check{\mathaccent"7\!otfam14 }  \def\breve{\mathaccent"7\!otfam15 }
+    \def\bar{\mathaccent"7\!otfam16 }
+    \def\hat{\mathaccent"7\!otfam5E }
+    \def\dot{\mathaccent"7\!otfam5F }
+    \def\tilde{\mathaccent"7\!otfam7E }
+    \def\ddot{\mathaccent"7\!otfam7F }
+    \def\backslash{\delimiter"26E3\!otfam F }
+    \def\lmoustache{\delimiter"4\!otfam00340 }
+    \def\rmoustache{\delimiter"5\!otfam00341 }
+    \def\lgroup{\delimiter"4\!otfam0033A } 
+    \def\rgroup{\delimiter"5\!otfam0033B }
+    \def\hbar{{\mathchar"0\!otfam16\mkern-9muh}}\fi
+%
+%  .(4) %%% '\elevenpoint' class ...................................................
+\newskip\ttglue
+\font\eleveni  = cmmi10   at 11pt  % math italic
+\font\elevensy = cmsy10   at 11pt  % math symbols
+\font\elevenex = cmex10   at 11pt  % math extension
+\font\elevenbi = cmmib10  at 11pt  % math boldface italic 
+\font\elevenrm = cmr10    at 11pt  % text roman
+\font\elevenit = cmti10   at 11pt  % text italic
+\font\elevensl = cmsl10   at 11pt  % text slanted roman
+\font\eleventt = cmtt10   at 11pt  % text typewriter
+\font\elevenbf = cmbx10   at 11pt  % text boldface extended
+\font\elevensc = cmcsc10  at 11pt  % text small cap
+\font\elevenbs = cmbxsl10 at 11pt  % text slanted boldface
+% --- WORD style : .tfm fonts
+\if!wordstyle
+% note: you can't insert the instructions above
+%  \font\eleveni  = timenrri at 11pt
+%  \font\elevenbi = timenrbi at 11pt
+% because 'eleveni' and 'elevenbi' also contain greek letters!
+    \font\elevenrm = timenrr  at 11pt
+    \font\elevensl = timenrri at 11pt
+    \font\elevenit = timenrri at 11pt
+    \font\elevenbf = timenrb  at 11pt
+    \font\elevenbs = timenrbi at 11pt
+%   \font\elevensc = timenrr  at  8pt % smallcap font
+    \font\elevenot = cmr10 at 11pt\fi
+% --- end of WORD style
+\font\eightrm  = cmr8              % text roman subscripts and superscripts
+\font\eighti   = cmmi8             % math italic subscripts and superscripts
+\font\eightsy  = cmsy8             % math symbols subscripts and superscripts
+\font\eightex  = cmex8             % math extension subscripts and superscripts
+% --- WORD style : .tfm fonts
+\if!wordstyle 
+    \font\eightrm = timenrr at 8pt
+    \font\eightot = cmr8\fi
+% --- end of WORD style
+\font\sixrm    = cmr6              % text roman double subscripts and superscripts
+\font\sixi     = cmmi6             % math italic double subscripts and superscripts
+\font\sixsy    = cmsy6             % math symbols double subscripts and superscripts
+% --- WORD style : .tfm fonts
+\if!wordstyle
+    \font\sixrm = timenrr at 6pt
+    \font\sixot = cmr6\fi
+% --- end of WORD style
+\skewchar\eleveni = '177\skewchar\eighti = '177\skewchar\sixi = '177
+\skewchar\elevensy = '60\skewchar\eightsy = '60\skewchar\sixsy = '60
+\hyphenchar\eleventt = -1
+\def\elevenpoint{%
+    \def\rm{\fam0\elevenrm}%
+        \textfont0 = \elevenrm\scriptfont0 = \eightrm\scriptscriptfont0 = \sixrm%
+    \textfont1 = \eleveni \scriptfont1 = \eighti \scriptscriptfont1 = \sixi%
+    \textfont2 = \elevensy\scriptfont2 = \eightsy\scriptscriptfont2 = \sixsy%
+    \textfont3 = \elevenex\scriptfont3 = \elevenex\scriptscriptfont3 = \elevenex%
+    \def\it{\fam\itfam\elevenit}\textfont\itfam = \elevenit%
+    \def\sl{\fam\slfam\elevensl}\textfont\slfam = \elevensl%
+    \def\tt{\fam\ttfam\eleventt}\textfont\ttfam = \eleventt%
+    \def\bf{\fam\bffam\elevenbf}\textfont\bffam = \elevenbf%
+    \def\sc{\fam\scfam\elevensc}\textfont\scfam = \elevensc%
+    \def\bs{\fam\bsfam\elevenbs}\textfont\bsfam = \elevenbs%
+    \if!wordstyle
+        \def\ot{\fam\otfam\elevenot}%
+            \textfont\otfam = \elevenot%
+            \scriptfont\otfam = \eightot \scriptscriptfont\otfam = \sixot\fi%
+    \tt\ttglue = .5em plus.25em minus.15em%
+    \normalbaselineskip = 12.5pt%
+    \setbox\strutbox = \hbox{\vrule height8.5pt depth3.5pt width0pt}%
+    \normalbaselines\rm}
+\elevenpoint % default 11-point type: \elevenpoint
+%
+%  .(5) %%% '\tenpoint' class ......................................................
+\font\teni  = cmmi10           % math italic
+\font\tensy = cmsy10           % math symbols
+\font\tenex = cmex10           % math extension
+\font\tenbi = cmmib10          % math boldface italic 
+\font\tenrm = cmr10            % text roman
+\font\tenit = cmti10           % text italic
+\font\tensl = cmsl10           % text slanted roman
+\font\tentt = cmtt10           % text typewriter
+\font\tenbf = cmbx10           % text boldface extended
+\font\tensc = cmcsc10          % text small cap
+\font\tenbs = cmbxsl10         % text slanted boldface
+% --- WORD style : .tfm fonts
+\if!wordstyle
+    \font\tenrm = timenrr  at 10pt
+    \font\tensl = timenrri at 10pt
+    \font\tenit = timenrri at 10pt
+    \font\tenbf = timenrb  at 10pt
+    \font\tenbs = timenrbi at 10pt
+%   \font\tensc = timenrr  at  8pt % smallcap font
+    \font\tenot = cmr10\fi
+% --- end of WORD style
+\font\sevenrm  = cmr7              % text roman subscripts and superscripts
+\font\seveni   = cmmi7             % math italic subscripts and superscripts
+\font\sevensy  = cmsy7             % math symbols subscripts and superscripts
+\font\sevenex  = cmex7             % math extension subscripts and superscripts
+% --- WORD style : .tfm fonts
+\if!wordstyle 
+    \font\sevenrm = timenrr at 7pt
+    \font\sevenot = cmr7\fi
+% --- end of WORD style
+\font\fiverm    = cmr5             % text roman double subscripts and superscripts
+\font\fivei     = cmmi5            % math italic double subscripts and superscripts
+\font\fivesy    = cmsy5            % math symbols double subscripts and superscripts
+% --- WORD style : .tfm fonts
+\if!wordstyle
+    \font\fiverm = timenrr at 5pt
+    \font\fiveot = cmr5\fi
+% --- end of WORD style
+\skewchar\teni = '177\skewchar\seveni = '177\skewchar\fivei = '177
+\skewchar\tensy = '60\skewchar\sevensy = '60\skewchar\fivesy = '60
+\hyphenchar\tentt = -1
+\def\tenpoint{%
+    \def\rm{\fam0\tenrm}%
+        \textfont0 = \tenrm\scriptfont0 = \sevenrm\scriptscriptfont0 = \fiverm%
+    \textfont1 = \teni \scriptfont1 = \seveni \scriptscriptfont1 = \fivei%
+    \textfont2 = \tensy\scriptfont2 = \sevensy\scriptscriptfont2 = \fivesy%
+    \textfont3 = \tenex\scriptfont3 = \tenex\scriptscriptfont3 = \tenex%
+    \def\it{\fam\itfam\tenit}\textfont\itfam = \tenit%
+    \def\sl{\fam\slfam\tensl}\textfont\slfam = \tensl%
+    \def\tt{\fam\ttfam\tentt}\textfont\ttfam = \tentt%
+    \def\bf{\fam\bffam\tenbf}\textfont\bffam = \tenbf%
+    \def\sc{\fam\scfam\tensc}\textfont\scfam = \tensc%
+    \def\bs{\fam\bsfam\tenbs}\textfont\bsfam = \tenbs%
+    \if!wordstyle
+        \def\ot{\fam\otfam\tenot}%
+            \textfont\otfam = \tenot%
+            \scriptfont\otfam = \sevenot \scriptscriptfont\otfam = \fiveot\fi%
+    \tt\ttglue = .5em plus.25em minus.15em%
+    \normalbaselineskip = 12.5pt%
+    \setbox\strutbox = \hbox{\vrule height8.5pt depth3.5pt width0pt}%
+    \normalbaselines\rm}
+%
+%  .(6) %%% '\ninepoint' class .....................................................
+\font\ninei  = cmmi9            % math italic
+\font\ninesy = cmsy9            % math symbols
+\font\nineex = cmex9            % math extension
+\font\ninebi = cmmib9           % math boldface italic 
+\font\ninerm = cmr9             % text roman
+\font\nineit = cmti9            % text italic
+\font\ninesl = cmsl9            % text slanted roman
+\font\ninett = cmtt9            % text typewriter
+\font\ninebf = cmbx9            % text boldface extended
+\font\ninesc = cmcsc9           % text small cap
+\font\ninebs = cmbxsl10 at 9pt  % text slanted boldface
+% --- WORD style : .tfm fonts
+\if!wordstyle
+    \font\ninerm = timenrr  at 9pt
+    \font\ninesl = timenrri at 9pt
+    \font\nineit = timenrri at 9pt
+    \font\ninebf = timenrb  at 9pt
+    \font\ninebs = timenrbi at 9pt
+%   \font\ninesc = timenrr  at 7pt % smallcap font
+    \font\nineot = cmr9\fi
+% --- end of WORD style
+\font\sixi  = cmmi6            % math italic double subscripts and superscripts
+\font\sixsy = cmsy6            % math symbols double subscripts and superscripts
+\font\sixrm = cmr6             % text roman double subscripts and superscripts
+% --- WORD style : .tfm fonts
+\if!wordstyle
+    \font\sixrm = timenrr at 6pt
+    \font\sixot = cmr6\fi
+% --- end of WORD style
+\skewchar\ninei = '177\skewchar\sixi = '177\skewchar\fivei = '177
+\skewchar\ninesy = '60\skewchar\sixsy = '60\skewchar\fivesy = '60
+\hyphenchar\ninett = -1
+\def\ninepoint{%
+    \def\rm{\fam0\ninerm}%
+        \textfont0 = \ninerm\scriptfont0 = \sixrm\scriptscriptfont0 = \fiverm%
+    \textfont1 = \ninei \scriptfont1 = \sixi  \scriptscriptfont1 = \fivei%
+    \textfont2 = \ninesy\scriptfont2 = \sixsy \scriptscriptfont2 = \fivesy%
+    \textfont3 = \nineex\scriptfont3 = \nineex\scriptscriptfont3 = \nineex%
+    \def\it{\fam\itfam\nineit}\textfont\itfam = \nineit%
+    \def\sl{\fam\slfam\ninesl}\textfont\slfam = \ninesl%
+    \def\tt{\fam\ttfam\ninett}\textfont\ttfam = \ninett%
+    \def\bf{\fam\bffam\ninebf}\textfont\bffam = \ninebf%
+    \def\sc{\fam\scfam\ninesc}\textfont\scfam = \ninesc%
+    \def\bs{\fam\bsfam\ninebs}\textfont\bsfam = \ninebs%
+    \if!wordstyle
+        \def\ot{\fam\otfam\nineot}%
+            \textfont\otfam = \nineot%
+            \scriptfont\otfam = \sixot \scriptscriptfont\otfam = \fiveot\fi%
+    \tt\ttglue = .5em plus.25em minus.15em%  
+    \normalbaselineskip = 12pt
+    \setbox\strutbox = \hbox{\vrule height8pt depth3pt width0pt}%
+    \normalbaselines\rm}
+%
+%  .(7) %%% '\eightpoint' class ....................................................
+\font\eighti  = cmmi8            % math italic
+\font\eightsy = cmsy8            % math symbols
+\font\eightex = cmex8            % math extension
+\font\eightbi = cmmib8           % math boldface italic 
+\font\eightrm = cmr8             % text roman
+\font\eightit = cmti8            % text italic
+\font\eightsl = cmsl8            % text slanted roman
+\font\eighttt = cmtt8            % text typewriter
+\font\eightbf = cmbx8            % text boldface extended
+\font\eightsc = cmcsc8           % text small cap
+\font\eightbs = cmbxsl10 at 8pt  % text slanted boldface
+% --- WORD style : .tfm fonts
+\if!wordstyle
+    \font\eightrm = timenrr  at 8pt
+    \font\eightsl = timenrri at 8pt
+    \font\eightit = timenrri at 8pt
+    \font\eightbf = timenrb  at 8pt
+    \font\eightbs = timenrbi at 8pt
+%   \font\eightsc = timenrr  at 6pt % smallcap font
+    \font\eightot = cmr8\fi
+% --- end of WORD style
+\def\eightpoint{%
+    \def\rm{\fam0\eightrm}%
+        \textfont0 = \eightrm\scriptfont0 = \sixrm\scriptscriptfont0 = \fiverm%
+    \textfont1 = \eighti \scriptfont1 = \sixi   \scriptscriptfont1 = \fivei%
+    \textfont2 = \eightsy\scriptfont2 = \sixsy  \scriptscriptfont2 = \fivesy%
+    \textfont3 = \eightex\scriptfont3 = \eightex\scriptscriptfont3 = \eightex%
+    \def\it{\fam\itfam\eightit}\textfont\itfam = \eightit%
+    \def\sl{\fam\slfam\eightsl}\textfont\slfam = \eightsl%
+    \def\tt{\fam\ttfam\eighttt}\textfont\ttfam = \eighttt%
+    \def\bf{\fam\bffam\eightbf}\textfont\bffam = \eightbf%
+    \def\sc{\fam\scfam\eightsc}\textfont\scfam = \eightsc%
+    \def\bs{\fam\bsfam\eightbs}\textfont\bsfam = \eightbs%
+    \if!wordstyle
+        \def\ot{\fam\otfam\eightot}%
+            \textfont\otfam = \eightot%
+            \scriptfont\otfam = \sixot \scriptscriptfont\otfam = \fiveot\fi%
+    \tt\ttglue = .5em plus.25em minus.15em%
+    \normalbaselineskip = 9pt
+    \setbox\strutbox = \hbox{\vrule height8pt depth3pt width0pt}%
+    \normalbaselines\rm}
+%
+%  .(8) %%% others fonts used ......................................................
+\let\!headlinefont = \eightrm
+\font\!titlefont   = cmbx12 at 14pt
+% --- WORD style : .tfm fonts
+\if!wordstyle
+    \font\!titlefont = timenrb at 14pt\fi
+% --- end of WORD style
+%
+%  .(9) %%% redefinition of Plain TeX macros about accents .........................
+\font\!accrm = cmr9            \font\!smaccrm = cmr8
+\font\!accit = cmsl9           \font\!smaccit = cmsl8
+\font\!accsl = cmsl9           \font\!smaccsl = cmsl8
+\font\!accbf = cmbx9           \font\!smaccbf = cmbx8
+\font\!acctt = cmtt9           \font\!smacctt = cmtt8
+\font\!accbs = cmbxsl10 at 9pt \font\!smaccbs = cmbxsl10 at 8pt
+% --- WORD style : .tfm fonts
+\if!wordstyle
+%    \def\`#1{{%
+%        \ifnum\fam = 0 \global\let\accfont = \!accrm\fi
+%        \ifnum\fam = \itfam \global\let\accfont = \!accit\fi
+%        \ifnum\fam = \slfam \global\let\accfont = \!accsl\fi
+%        \ifnum\fam = \bffam \global\let\accfont = \!accbf\fi
+%        \ifnum\fam = \ttfam \global\let\accfont = \!acctt\fi
+%        \ifnum\fam = \slfam \global\let\accfont = \!accsl\fi
+%        \ifnum\fam = \scfam \global\let\accfont = \!accsc\fi
+%        \ifnum\fam = \bsfam \global\let\accfont = \!accbs\fi
+%        \edef\next{\the\font}\accfont\accent"12\next#1}}%
+    \def\`#1{{\accent"12 #1}}%
+    \def\'#1{{\accent"13 #1}}%
+    \def\v#1{{{\edef\next{\the\font}\!accrm\accent"14\next#1}}}%
+    \def\u#1{{{\edef\next{\the\font}\!accrm\accent"15\next#1}}}%
+    \def\=#1{{{\edef\next{\the\font}\!accrm\accent"16\next#1}}}%
+    \def\^#1{{\accent"5E #1}}%
+    \def\.#1{{{\edef\next{\the\font}\!accrm\accent"5F\next#1}}}%
+    \def\H#1{{{\edef\next{\the\font}\!accrm\accent"7D\next#1}}}%
+    \def\~#1{{\accent"7E #1}}%
+    \def\"#1{{\accent"7F #1}}%
+    \def\i{i} % redefinition of TeX dotless i (to allow the use of \`\i with TTfont)
+\fi
+% --- end of WORD style
+%
+%  .(10) %%% redefinition of some text symbols .....................................
+% --- WORD style : .tfm fonts
+\if!wordstyle
+    \def\dag{\mathhexbox086}
+    \def\ddag{\mathhexbox087}
+    \def\S{\mathhexbox0A7}
+    \def\P{\mathhexbox0B6}
+    \chardef\pounds = "A3
+    \chardef\copyright = "A9
+    \chardef\AA = "C5
+    \chardef\ss = "DF
+    \chardef\aa = "E5
+    \def\l{%
+        \leavevmode\edef\ldash{{\ot\char"20}}%
+        \setbox0\hbox{l}l\hskip-\wd0\ldash\hskip+\wd0%
+        \setbox0\hbox{\ldash}\hskip-\wd0}
+    \def\L{%
+        \leavevmode\edef\ldash{{\ot\char"20}}%
+        \setbox0\hbox{L}L\hskip-\wd0\ldash\hskip+\wd0%
+        \setbox0\hbox{\ldash}\hskip-\wd0}\fi
+% --- end of WORD style
+%
+%  .(11) %%% macro to set the text style ...........................................
+\def\textrm#1{\bgroup\rm#1\egroup}  % typeset text in roman typeface
+\def\texttt#1{\bgroup\tt#1\egroup}  % typeset text in typewriter typeface
+\def\textbf#1{\bgroup\bf#1\egroup}  % typeset text in bold typeface
+\def\textbs#1{\bgroup\bs#1\egroup}  % typeset text in italic bold typeface
+\def\textit#1{\bgroup\it#1\egroup}  % typeset text in italic shape
+\def\textsl#1{\bgroup\sl#1\egroup}  % typeset text in slanted shape
+\def\textsc#1{\bgroup\sc#1\egroup}  % typeset text in small caps shape
+% --- WORD style : smallcap font
+% \if!wordstyle
+%     \def\gobble#1#2{\bgroup\elevenpoint\rm#1\egroup#2}
+%     \def\!firstletter#1{\gobble#1}
+%     \def\Smallcap#1{%                 % maiuscoletto con prima lettera piu' grande
+%         \bgroup\sc\uppercase{\!firstletter{#1}}\egroup}
+%     \def\smallcap#1{\bgroup\sc\uppercase{#1}\egroup}\fi        % tt smallcap style
+% --- end of WORD style
+\def\smallcap#1{\bgroup\sc#1\egroup}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (3) %%% HEADLINE AND FOOTLINE MACROS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newif\ifhideheadline\hideheadlinetrue
+\nopagenumbers
+\footline = {\hfill}
+\def\!oddheadline{%
+    \vbox{\hbox to\hsize{\hfil\!headlinefont\!!headlinetitle\hfil{\tenrm\folio}}}}%
+\def\!evenheadline{%
+    \vbox{\hbox to\hsize{{\tenrm\folio}\hfil\!headlinefont\!!author\hfil}}}%
+\headline = {%
+    \ifhideheadline{\hfil}\global\hideheadlinefalse%
+    \else\ifodd\pageno\!oddheadline\else\!evenheadline\fi\fi}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (4) %%% MACROS TO FORMAT PARAGRAPHS, TITLES, FOOTNOTES, ETC. %%%%%%%%%%%%%%%%%%%%%
+\def\lb{\char'173{}} % left brace
+\def\rb{\char'175{}} % right brace
+\def\!!author{{\tt\char92author\lb\rb\ is undefined!}}
+\def\!!headlinetitle{{\tt\char92headlinetitle\lb\rb\ is undefined!}}
+\def\begin#1{% the 'begin{}' environment definition
+    \begingroup
+    \let\end = \!endbegin                             % now \end will end the \begin
+    \expandafter\ifx\csname !#1\endcsname\relax\relax\def\!next{\!beginerror{#1}}
+    \else\def\!next{\csname !#1\endcsname}\fi\!next}
+\def\!endbegin#1{% the 'end{}' environment definition
+    \expandafter\ifx\csname !end#1\endcsname\relax\relax
+        \def\!next{\begingroup\!beginerror{#1}}                      % flag an error
+    \else\def\!next{\csname !end#1\endcsname}\fi\!next%
+    \endgroup}                                        % now \end goes back to normal
+%
+%  .(1) %%% the macros '\author' and '\headlinetitle' ..............................
+\def\author#1{\gdef\!!author{\def\&{\hbox{~e~}}\uppercase{#1}}}
+\def\headlinetitle#1{\gdef\!!headlinetitle{\uppercase{#1}}}
+%
+%  .(2) %%% the environment '\begin{doceye}' - '\end{doceye}' ......................
+\def\!doceyefilline{\hfill\break\ignorespaces}
+\def\!doceye{%
+    \vbox\bgroup
+    \let\\ = \!doceyefilline                            % '\\' to jump to a new line
+    \leftskip = 0pt\rightskip = 0pt plus 1fill\baselineskip = 8pt
+    \eightpoint\sl\noindent\ignorespaces}
+\def\!enddoceye{\egroup\vskip 1.3mm}
+%
+%  .(3) %%% the macro '\subject' ...................................................
+\def\subject#1{
+    \vbox{%
+        \leftskip = 0pt plus 1fill\rightskip = 0pt\baselineskip = 8pt%
+        \noindent\eightpoint\rm\ignorespaces\uppercase{#1}}
+    \vskip 22pt plus 4pt minus 4pt}
+%
+%  .(4) %%% the macro '\title' .....................................................
+\font\eighteenbs = cmbxsl10 at 14pt
+\font\eighteenmath = cmbxti10 at 14pt
+\def\title#1{%
+    \vbox{%
+        \let\bs = \eighteenbs             % text slanted boldface local redefinition
+        \textfont1 = \eighteenmath                % local redefinition of math fonts
+        \font\!accfont = cmbx12 at 13pt   % (local redefinition, because of accents)
+        \leftskip = 0pt plus 1fill\rightskip = \leftskip\baselineskip = 16pt%
+        \noindent\!titlefont\ignorespaces#1}%
+    \vskip 18pt plus 4pt minus 4pt}
+%
+%  .(5) %%% the environment '\begin{subtitle}' - '\end{subtitle}' ..................
+\font\elevenmath = cmbxti10 at 11pt
+\def\!subtitle{%
+    \vbox\bgroup
+        \font\!accfont = cmbx10           % (local redefinition, because of accents)
+        \let\\ = \break                                 % '\\' to jump to a new line
+        \leftskip = 0pt plus 1fill\rightskip = \leftskip\baselineskip = 12.5pt%
+        \elevenpoint%
+        \textfont1 = \elevenmath%                 % local redefinition of math fonts
+        \bf\noindent\ignorespaces}
+\def\!endsubtitle{\egroup\vskip 15pt plus 3pt minus 3pt}
+%
+%  .(6) %%% the environment '\begin{abstract}' - '\end{abstract}' ..................
+\def\!abstract{\!!abstract}
+\def\!!abstract#1\\{
+    \leftskip  = 9mm\rightskip = 9mm\parindent = 3mm
+    % \pretolerance = 10000        % decomment this line if you not like hyphenation
+    \tenpoint{\bf#1.}\enskip\sl\ignorespaces}
+\def\!endabstract{\par}
+%
+%  .(7) %%% the environment '\begin{footnote}' - '\end{footnote}' ..................
+\catcode`@ = 11
+\def\footnoterule{\kern16\p@\hrule width 2 true cm height.3pt\kern 2.6\p@}
+%\def\footnoterule{\kern-3\p@\hrule width 2 true cm height.3pt\kern 2.6\p@}
+\newcount\!nfootnote \!nfootnote = 0
+\def\!smallkern{\kern.12em}
+\def\!footnotefilline{\hfill\break\ignorespaces}
+\def\!footnum{$^{\the\!nfootnote}$}    % ex. \def\!footnum{${}^{(\the\!nfootnote)}$}
+\def\!footnote{%
+    \global\advance\!nfootnote by 1%
+    \unskip%            % throw away the horizontal space before the footnote number
+   %\unskip\!smallkern%
+    \let\@sf = \empty%                                      % the text is read later
+    \ifhmode\edef\@sf{\spacefactor = \the\spacefactor}\/\fi%
+    {\!footnum}\@sf\!vfootnote}
+\def\!vfootnote{%
+    \insert\footins\bgroup%
+    \let\\ = \!footnotefilline%                         % '\\' to jump to a new line
+    \interlinepenalty\interfootnotelinepenalty%
+    \splittopskip = \ht\strutbox%                % top baseline for broken footnotes
+    \splitmaxdepth = \dp\strutbox\floatingpenalty = 20000%
+    \leftskip = 0pt\rightskip = 0pt\spaceskip = 0pt\xspaceskip = 0pt%
+    \eightpoint{\let\enspace = \!smallkern\textindent{\!footnum}\footstrut}%
+    \futurelet\next\!fo@t\ignorespaces}
+\def\!fo@t{\ifcat\bgroup\noexpand\next\let\next\!f@@t\else\let\next\!f@t\fi}
+\def\!f@@t{\bgroup\aftergroup\!@foot\let\next}
+\def\!f@t#1{#1\!@foot}
+\def\!@foot{\strut\egroup}
+\skip\footins = \bigskipamount                % space added when footnote is present
+\count\footins = 1000                       % footnote magnification factor (1 to 1)
+\dimen\footins = 5cm                                    % maximum footnotes per page
+\def\!endfootnote{\egroup}
+\recoverAtCode
+%
+%  .(8) %%% the environment '\begin{firstpagenote}' - '\end{firstpagenote}' ........
+\def\!firstpagenotefilline{\hfill\break\indent\ignorespaces}
+\def\!firstpagenote{%
+    \let\\ = \!firstpagenotefilline                     % '\\' to jump to a new line
+    \insert\footins\bgroup%
+    \smallskip\baselineskip = 9pt\eightpoint\ignorespaces}
+\def\!endfirstpagenote{\egroup}
+%
+%  .(9) %%% the environment '\begin{authornote}' - '\end{authornote}' ..............
+\def\!authornote{%
+    \let\\ = \break                                     % '\\' to jump to a new line
+    \leftskip = 0pt plus 1fill\rightskip = \leftskip
+    \pretolerance = 10000          % decomment this line if you not like hyphenation
+    \ninepoint\noindent\ignorespaces}
+\def\!endauthornote{\vskip 18pt plus 4pt minus 4pt}
+%
+%  .(10) %%% the macro '\section' ..................................................
+\def\section#1{%
+    \vskip 7.7mm
+    \vbox{\leftskip = 0pt\rightskip = 0pt plus 1fill\noindent\bf#1}
+    \nobreak\vskip 4mm
+    %\noindent
+    \ignorespaces}
+%
+%  .(11) %%% the environment '\begin{proof}' - '\end{proof}' .......................
+\def\!proof{\!!proof}
+\def\!!proof#1\\{\smallskip{\sl\noindent\ignorespaces#1.}\rm\enskip\ignorespaces}
+\def\!endproof{\nobreak\enskip\veop\bigskip}
+%
+%  .(12) %%% the environment '\begin{proclaim}' - '\end{proclaim}' .................
+\def\!proclaim{\!!proclaim}
+\def\!!proclaim#1\\{%
+    \bigbreak{\bf\noindent\ignorespaces#1.\kern.5em}\sl\ignorespaces}
+\def\!endproclaim{\bigskip}
+%
+%  .(13) %%% the environment '\begin{smallsection}' - '\end{smallsection}' .........
+\def\!smallsection{
+    \vskip.2cm
+    \leftskip = 9mm\rightskip = 9mm\parindent = 3mm\baselineskip = 12pt
+    % \pretolerance = 10000        % decomment this line if you not like hyphenation
+    \ninepoint\ignorespaces}
+\def\!endsmallsection{\par\vskip.5cm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (5) %%% MATHEMATICALS MACROS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  .(1) %%% the macro '\veop' ......................................................
+%\def\mathno#1{\leqno{\indent\rm(#1)}}
+\def\mathno#1{\leqno{\rm(#1)}}
+\def\!wbox#1/{%
+    \vbox{%
+        \hrule height 0.2pt%
+        \hbox{\vrule height#1 width 0.2pt\kern#1\vrule height#1 width 0.2pt}%
+        \hrule height 0.2pt}}
+\newbox\!boxendpoint\setbox\!boxendpoint = \hbox{\!wbox4pt/}
+\def\veop{\copy\!boxendpoint}
+%
+%  .(2) %%% the macro '\beop' ......................................................
+\def\!blackendpoint#1{\vrule height #1pt width #1pt depth 0pt}   % (opp.: depth 2pt)
+\def\beop{\!blackendpoint{4}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (6) %%% MACROS TO INSERT VERTICAL SPACE AND FIGURES (ps,eps,bmp,wmf) %%%%%%%%%%%%%
+%  .(1) %%% the macro '\topspace', '\midspace' .....................................
+% note. paramethers: #1 = vertical space, #2, #3 = legend
+\def\topspace#1#2#3{
+    \topinsert\vskip #1                   % a '\bigskip' is inserted by '\topinsert'
+    \medskip
+    \centerline{\ninepoint{\sl #2~--}\enskip\rm #3}
+    \endinsert}
+\def\midspace#1#2#3{
+    \goodbreak\bigskip\midinsert\vskip #1 % a '\bigskip' is inserted by '\midinsert'
+    \medskip
+    \centerline{\ninepoint{\sl #2~--}\enskip\rm #3}
+    \endinsert}
+%
+%  .(2) %%% the macros '\topfigure', '\midfigure' and the derived ones .............
+% note 1. paramethers:
+%    #1 = path+filename (use "/" instead of "\" to specify the subdirectories)
+%    #2 = width of the image
+%    #3 = height of the image
+%    #4 = indentation of the graphic image
+%    #5 = the number of the image
+%    #6 = the legend of the image
+%    #7 = the graphic format of the image (bmp, eps, ps, wmf)
+%
+% note 2. usage:
+%   \legendvoffset = 12pt % only if you need to change the default skip value
+%   \topfigure{figure.ps}{8cm}{4.5cm}{2.2cm}{1.1}{The legend of the image}{eps}
+%   % or (short version)
+%   \epstopfigure{figure.ps}{8cm}{4.5cm}{2.2cm}{1.1}{The legend of the image}
+%
+% note 3. '\legendvoffset' is the blank space between the figure and it's legend
+% You can set it in your document, before the macro call(s), to the value(s) you
+% need (positive or negative!). The default one is '\bigskipamount', but for some
+% eps formats this could not be the right choice...
+\newskip\legendvoffset\legendvoffset = 12pt plus 4pt minus 4pt % (\bigskipamount)
+\newif\if!filexists\!filexistsfalse
+\def\!testfilexistance#1{%
+    \immediate\openin0 = #1\space
+    \ifeof0\global\!filexistsfalse\else\global\!filexiststrue\fi
+    \immediate\closein0}
+\def\topfigure#1#2#3#4#5#6#7{%
+    \!testfilexistance{#1}
+    \topinsert\vbox{%
+        \vskip\baselineskip % blank space at the top of the page
+        \if!filexists
+            \vskip#3\relax\noindent\hskip#4\relax\special{#7:#1 x=#2, y=#3}%
+            \vskip\legendvoffset%
+            \centerline{\ninepoint{\sl #5~--}\enskip\rm #6}%
+            \vskip 10pt plus 3pt minus 3pt%
+        \else\vskip 2cm\centerline{\bf OOPS! File ``#1'' not found!}\vskip 2cm\fi}
+    \endinsert}
+\def\midfigure#1#2#3#4#5#6#7{%
+    \!testfilexistance{#1}
+    \goodbreak\bigskip\midinsert\vbox{%
+        \if!filexists
+            \vskip#3\relax\noindent\hskip#4\relax\special{#7:#1 x=#2, y=#3}
+            \vskip\legendvoffset
+            \centerline{\ninepoint{\sl #5~--}\enskip\rm #6}
+            \vskip 10pt plus 3pt minus 3pt%
+        \else\vskip 2cm\centerline{\bf OOPS! File ``#1'' not found!}\vskip 2cm\fi}
+    \endinsert}
+%
+%    ..(1) %%% the macros '\pstopfigure', '\psmidfigure', etc. .....................
+\def\pstopfigure#1#2#3#4#5#6{\topfigure{#1}{#2}{#3}{#4}{#5}{#6}{ps}}
+\def\psmidfigure#1#2#3#4#5#6{\midfigure{#1}{#2}{#3}{#4}{#5}{#6}{ps}}
+\def\epstopfigure#1#2#3#4#5#6{\topfigure{#1}{#2}{#3}{#4}{#5}{#6}{eps}}
+\def\epsmidfigure#1#2#3#4#5#6{\midfigure{#1}{#2}{#3}{#4}{#5}{#6}{eps}}
+\def\bmptopfigure#1#2#3#4#5#6{\topfigure{#1}{#2}{#3}{#4}{#5}{#6}{bmp}}
+\def\bmpmidfigure#1#2#3#4#5#6{\midfigure{#1}{#2}{#3}{#4}{#5}{#6}{bmp}}
+\def\wmftopfigure#1#2#3#4#5#6{\topfigure{#1}{#2}{#3}{#4}{#5}{#6}{wmf}}
+\def\wmfmidfigure#1#2#3#4#5#6{\midfigure{#1}{#2}{#3}{#4}{#5}{#6}{wmf}}
+%
+%    ..(2) %%% old macro '\figcap' (by Francesco Zanoni) ...........................
+\def\figcap#1#2#3#4#5#6{%
+    \!wlog{^^J%
+        > !OOPS... warning!^^J%
+        > \string\figcap\space is now obsolete! It will soon disappear!^^J%
+        > Please use the improved macros \string\epstopfigure\space or 
+          \string\epsmidfigure\space instead.^^J%
+        > But I'll try to do it anyway...^^J}%
+    \goodbreak\vbox{%
+        \vskip#3\relax\noindent\hskip#4\relax\special{eps:#1 x=#2, y=#3}
+        \vskip-1.08cm\centerline{\ninepoint{\sl #5~--}\enskip\rm #6}}
+    \vskip1.5cm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (7) %%% MACROS FOR BIBLIOGRAPHY AND REFERENCES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\bibitem#1#2#3#4{%
+    \par\bgroup
+    \let\\ = \relax
+    \frenchspacing\exhyphenpenalty = 10000
+    \baselineskip = 10pt
+    \parindent = .8cm\par\hangindent\parindent%
+    \ninepoint\indent\llap{[#1]\enspace}{\sc#2 }{\it#3 }{\rm#4 }
+    \bigskip\egroup}
+\def\biblioref#1#2{\bgroup{\rm #1}~[#2]\egroup}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (8) %%% MACROS TO SHOW ASTMACRO ERROR MESSAGES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  .(1) %%% general error messages macros ..........................................
+\def\!newhelp#1#2{\!newtoks#1#1\expandafter{\csname#2\endcsname}}
+\def\!hmsg{Type  h <return>  for immediate help or  x <return>  to quit.^^J}
+\def\!deferrstr#1{^^J!OOPS... : #1 !^^J\!hmsg}
+%
+%  .(2) %%% error about environment '\begin{}' - '\end{}' ..........................
+\!newhelp\!beginhelp{%
+    The \string\begin\space or \string\end\space marked above is for a 
+    non-existant^^J
+    environment.  Check for spelling errors and such.}
+\def\!beginerror#1{%
+    \errhelp = \!beginhelp
+    \errmessage{%
+        \!deferrstr{Undefined environment for \string\begin\space or \string\end}}}
+%
+%  .(3) %%% missing '\j' character error ...........................................
+% --- WORD style : .tfm fonts
+\if!wordstyle
+\!newhelp\!jhelp{%
+    Sorry, there is no \string\j\space character in true-type fonts, and I've no
+    idea^^J
+    of what I can do to fix this problem. Any good suggestions?}
+\def\j{%
+    \errhelp = \!jhelp
+    \errmessage{%
+        \!deferrstr{Missing character: 
+            there is no \string\j\space character in true-type fonts.}}}\fi
+% --- end of WORD style
+%
+%  .(4) %%% '\mit' font change command removed .....................................
+%\let\mit = \undefined % because \mit shouldn't be used
+\if!wordstyle
+\!newhelp\!mithelp{%
+    The \string\mit\space font change command has been removed because of its^^J
+    incompatibility with the current format. Please use
+    \string\varGamma, ..., \string\varOmega^^J
+    if you need slanted uppercase Greek letters.}
+\def\mit{%
+    \errhelp = \!mithelp
+    \errmessage{%
+        \!deferrstr{\string\mit\space command not available}}}\fi
+% --- end of WORD style
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\!restoreDefaults
+%%% end of file astmacro.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% by Davide MADRISAN %%%

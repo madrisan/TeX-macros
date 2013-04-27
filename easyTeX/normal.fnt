@@ -1,0 +1,78 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% tex.macro.file{                                                                  %
+%     nome              = normal.fnt,                                              %
+%     versione          = 1.01                                                     %
+%     revisione interna = 02a                                                      %
+%     data creazione    = 13/GIU/1998,                                             %
+%     ultima revisione  = 12/GEN/1999,                                             %
+%     tipo di file      = easyTeX,                                                 %
+%     autore            = Davide MADRISAN,                                         %
+%     contenuto         = File con le specifiche dei font del modello normal.      %
+% }                                                                                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% by MDtex!96!98 %%%
+
+\catcode`! = 11                                % privatizzazione delle macro interne
+
+% (1) %%% IMPOSTAZIONI relative ai FONT del modello NORMAL %%%%%%%%%%%%%%%%%%%%%%%%%
+%  .(1) %%% definizione di "\!titlefonts" .........................................
+\font\twentybi = cmmib10 at 20pt
+\font\twentybf = cmbx12 at 20pt
+\font\twentysy = cmsy10 at 20pt
+\font\twentyex = cmex10 at 20pt
+\font\fourteenbi = cmmib10 at 14pt
+\font\fourteenbf = cmbx12 at 14pt
+\font\fourteensy = cmsy10 at 14pt
+\font\fourteenex = cmex10 at 14pt
+\font\twelvebi = cmmib10 at 12pt
+\font\twelvebf = cmbx12
+\font\twelvesy = cmsy10 at 12pt
+\font\twelveex = cmex10 at 12pt
+\def\!titlefonts{%     % per poter inserire anche lettere \cal e formule nel titolo
+    \def\rm{\fam0\twentybf}%
+    \textfont0 = \twentybf\scriptfont0 = \fourteenbf\scriptscriptfont0 = \twelvebf%
+    \textfont1 = \twentybi\scriptfont1 = \fourteenbi\scriptscriptfont1 = \twelvebi%
+    \def\mit{\fam1}%
+    \def\oldstyle{\fam1\twentybi}%
+    \textfont2 = \twentysy\scriptfont2 = \fourteensy\scriptscriptfont2 = \twelvesy%
+    \def\cal{\fam2}%
+    \textfont3 = \twentyex\scriptfont3 = \fourteenex\scriptscriptfont3 = \twelveex%
+    \normalbaselineskip = 22pt%
+    \normalbaselines\rm}
+%
+%  .(2) %%% definizione di "\!sectionfonts" .......................................
+\font\twelvebi = cmmib10 at 12pt
+\font\twelvebf = cmbx12
+\font\twelvesy = cmsy10 at 12pt
+\font\twelveex = cmex10 at 12pt
+\font\eightbi = cmmib10 at 8pt
+\font\eightbf = cmbx8
+\font\eightsy = cmsy8
+\font\eightex = cmex10 at 8pt
+\font\sixbi = cmmib10 at 6pt
+\font\sixbf = cmbx6
+\font\sixsy = cmsy6
+\font\sixex = cmex10 at 6pt
+\def\!sectionfonts{% % per poter inserire lettere \cal e formule nei titoli sezioni
+    \def\rm{\fam0\twelvebf}%
+    \textfont0 = \twelvebf\scriptfont0 = \eightbf\scriptscriptfont0 = \sixbf%
+    \textfont1 = \twelvebi\scriptfont1 = \eightbi\scriptscriptfont1 = \sixbi%
+    \def\mit{\fam1}%
+    \def\oldstyle{\fam1\twelvebi}%
+    \textfont2 = \twelvesy\scriptfont2 = \eightsy\scriptscriptfont2 = \sixsy%
+    \def\cal{\fam2}%
+    \textfont3 = \twelveex\scriptfont3 = \eightex\scriptscriptfont3 = \sixex%
+    \normalbaselineskip = 17pt%
+    \normalbaselines\rm}
+%
+%  .(3) %%% definizione del token "\!fonts" ........................................
+\!fonts = {%
+    \font\!covertitlefont = cmssdc10 at 34pt                 % oppure cmbx12 at 34pt
+    \font\!dunhillfont = cmdunh10 at 14pt
+    \font\!numberfont = cmbx12 at 15pt                      % memo. cmbxti10 at 15pt
+    \font\!subsectionfont = cmbx10 at 11pt}                    % titolo sottosezione
+\the\!fonts                                 % caricamento font con valori di default
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\catcode`! = 12            % rimettiamo le cose a posto prima di chiudere baracca...
+
+%%% fine del file Normal.fnt %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% by MDTeX!96!98 %%%

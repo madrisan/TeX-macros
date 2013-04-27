@@ -1,0 +1,53 @@
+% compatible.tex (Aug. 1990)
+% compatability macros for multilingual and extened TeX 2.992 plus
+% assumes the existence of \charsublist 
+
+% #1 -- extended character to be exchanged 
+% #2 -- accent macro invocation letter 
+% #3 -- base character for this code
+
+\def\csubinverse #1#2#3{\expandafter\def\csname #2#3\endcsname{#1}}
+                        
+\catcode`\@=11
+\def\i{^^P}
+\def\j{^^Q}
+
+% ... test case 
+
+\def\'#1{{\expandafter\ifx\csname @ac@#1\endcsname\relax
+           {\accent19 #1}\else\csname @ac@#1\endcsname\fi}}
+\def\`#1{{\expandafter\ifx\csname @gr@#1\endcsname\relax
+           {\accent18 #1}\else\csname @gr@#1\endcsname\fi}}
+\def\v#1{{\expandafter\ifx\csname @v@#1\endcsname\relax
+           {\accent20 #1}\else\csname @v@#1\endcsname\fi}}
+\let\^^_=\v
+
+\def\u#1{{\expandafter\ifx\csname @u@#1\endcsname\relax
+           {\accent21 #1}\else\csname  @u@#1\endcsname\fi}}
+\let\^^S=\u
+
+\def\=#1{{\expandafter\ifx\csname @eq@#1\endcsname\relax
+           {\accent22 #1}\else\csname @eq@#1\endcsname\fi}}
+\def\^#1{{\expandafter\ifx\csname @hat@#1\endcsname\relax
+           {\accent94 #1}\else\csname @hat@#1\endcsname\fi}}
+\let\^^D=\^
+\def\.#1{{\expandafter\ifx\csname @dot@#1\endcsname\relax
+           {\accent95 #1}\else\csname @dot@#1\endcsname\fi}}
+\def\H#1{{\expandafter\ifx\csname @H@#1\endcsname\relax
+           {\accent'175 #1}\else\csname @H@#1\endcsname\fi}}
+\def\~#1{{\expandafter\ifx\csname @til@#1\endcsname\relax
+           {\accent'176 #1}\else\csname @til@#1\endcsname\fi}}
+\def\"#1{{\expandafter\ifx\csname @um@#1\endcsname\relax
+           {\accent'177 #1}\else\csname @um@#1\endcsname\fi}}
+
+
+\let\c@@=\c
+\def\c#1{{\expandafter\ifx\csname c@#1\endcsname\relax
+           \c@@{#1}\else\csname c@#1\endcsname\fi}}
+% fix Justin Bur ... 1 Oct. 90
+
+
+
+% test form for accents ... 
+\def\aa{\accent23a}
+

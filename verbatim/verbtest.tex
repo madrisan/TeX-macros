@@ -1,0 +1,80 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Esempio di utilizzo (avanzato) degli ambiente verbatim implementati nei file
+% 'verbtt.tex' e 'verbcn.tex', versioni 3.4b, 16/Mag/1999.
+%
+% by Davide MADRISAN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\advance\hoffset by 8mm \nopagenumbers
+\font\twelvebf = cmbx12 \font\twelvett = cmtt12 \font\bigbf = cmbx12 at 16pt
+
+\input verbtt
+\font\verbatimfont = cmtt9 % font typewriter (famiglia \tt), dim. 9pt
+\def\\{\char92}
+% oppure: 
+% \input verbcn
+% \font\twelvett = courinb at 12pt
+% \def\\{\char'223}
+
+\newcount\linenum\linenum = 0 % contatore per numerazione delle linee del listato
+\def\newline{%
+    \advance\linenum by 1
+    \endgraf\noindent\leavevmode\llap{\sevenrm\the\linenum.\ \ }}
+
+\everyverbatimbegin = {% riduzione interlinea del 5% risp. valore esterno al blocco
+    \verbatimbaselineskip = .95\baselineskip}
+\everyverbatimend = {$$\diamond\quad\diamond\quad\diamond$$\vskip6mm}
+
+\vglue20mm
+\noindent \raise-1.4pt\hbox to0pt{\hss\bigbf!\hskip2.4mm}%
+    {\twelvebf Esempio d'uso dell'ambiente}
+   `{\twelvett\\verbatim $\dots$ @endverbatim}' \par
+\smallskip
+\noindent \bf (ovvero la stampa del codice \TeX\ di questo documento)
+\medskip
+\noindent by Davide Madrisan 
+\vskip12mm
+
+\verbatim
+\advance\hoffset by 8mm \nopagenumbers
+\font\twelvebf = cmbx12 \font\twelvett = cmtt12 \font\bigbf = cmbx12 at 16pt
+
+\input verbtt
+\font\verbatimfont = cmtt9 % font typewriter (famiglia \tt), dim. 9pt
+\def\\{\char92}
+
+\newcount\linenum\linenum = 0 % contatore per numerazione delle linee del listato
+\def\newline{%
+    \advance\linenum by 1
+    \endgraf\noindent\leavevmode\llap{\sevenrm\the\linenum.\ \ }}
+
+\everyverbatimbegin = {% riduzione interlinea del 5% risp. valore esterno al blocco
+    \verbatimbaselineskip = .95\baselineskip}
+\everyverbatimend = {$$\diamond\quad\diamond\quad\diamond$$\vskip6mm}
+
+\vglue20mm
+\noindent \raise-1.4pt\hbox to0pt{\hss\bigbf!\hskip2.4mm}%
+    {\twelvebf Esempio d'uso dell'ambiente}
+   `{\twelvett\\verbatim $\dots$ @@endverbatim}' \par
+\smallskip
+\noindent \bf (ovvero la stampa del codice \TeX\ di questo documento)
+\medskip
+\noindent by Davide Madrisan 
+\vskip12mm
+
+\verbatim
+\input verbtt
+\font\ninett = cmtt9 % carattere typewriter (famiglia \tt) a 9pt
+
+    (...etc, ricorsivamente...)
+
+\noindent Ritorno al trattamento di default del testo.
+\bye 
+@@endverbatim
+
+\noindent Ritorno al trattamento di default del testo.
+\bye 
+@endverbatim
+
+\noindent Ritorno al trattamento di default del testo.
+\bye

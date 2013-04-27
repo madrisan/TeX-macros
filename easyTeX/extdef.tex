@@ -1,0 +1,142 @@
+% extdef.tex (MAR 1991) 
+% \uccodes added 
+
+\input compatible
+% Michael J. Ferguson 
+% The codes used here convert the TeX \' ... accent sequences into the equivalent
+% ISO - Latin 1 values and also  provide their inverses. 
+% The ISO -Latin 1 code set is almost identical to the Digital (DEC) Multinational
+% Character set. 
+
+\catcode`\^^f6=11 \lccode`\^^f6= `\^^f6 \charsubdef `\^^f6 = '177 `\o
+\csubinverse ^^f6{@um@}o \uccode`\^^f6= `\^^d6 
+\catcode`\^^d6=11 \lccode`\^^d6= `\^^f6 \charsubdef `\^^d6 = '177 `\O
+\csubinverse ^^d6{@um@}O \uccode`\^^d6= `\^^d6 
+\catcode`\^^e1=11 \lccode`\^^e1= `\^^e1 \charsubdef `\^^e1 = '023 `\a
+\csubinverse ^^e1{@ac@}a  \uccode`\^^e1= `\^^c1 
+\catcode`\^^c1=11 \lccode`\^^c1= `\^^e1 \charsubdef `\^^c1 = '023 `\A
+\csubinverse ^^c1{@ac@}A  \uccode`\^^c1= `\^^c1 
+\catcode`\^^e0=11 \lccode`\^^e0= `\^^e0 \charsubdef `\^^e0 = '022 `\a
+\csubinverse ^^e0{@gr@}a  \uccode`\^^e0= `\^^c0 
+\catcode`\^^c0=11 \lccode`\^^c0= `\^^e0 \charsubdef `\^^c0 = '022 `\A
+\csubinverse ^^c0{@gr@}A  \uccode`\^^c0= `\^^c0 
+\catcode`\^^e2=11 \lccode`\^^e2= `\^^e2 \charsubdef `\^^e2 = '136 `\a
+\csubinverse ^^e2{@hat@}a  \uccode`\^^e2= `\^^c2 
+\catcode`\^^c2=11 \lccode`\^^c2= `\^^e2 \charsubdef `\^^c2 = '136 `\A
+\csubinverse ^^c2{@hat@}A  \uccode`\^^c2= `\^^c2
+\catcode`\^^e3=11 \lccode`\^^e3= `\^^e3 \charsubdef `\^^e3 = '176 `\a
+\csubinverse ^^e3{@til@}a  \uccode`\^^e3= `\^^c3
+\catcode`\^^c3=11 \lccode`\^^c3= `\^^e3 \charsubdef `\^^c3 = '176 `\A
+\csubinverse ^^c3{@til@}A  \uccode`\^^c3= `\^^c3
+\catcode`\^^e4=11 \lccode`\^^e4= `\^^e4 \charsubdef `\^^e4 = '177 `\a
+\csubinverse ^^e4{@um@}a  \uccode`\^^e4= `\^^c4
+\catcode`\^^c4=11 \lccode`\^^c4= `\^^e4 \charsubdef `\^^c4 = '177 `\A
+\csubinverse ^^c4{@um@}A  \uccode`\^^c4= `\^^c4
+\catcode`\^^e7=11 \lccode`\^^e7= `\^^e7 \charsubdef `\^^e7 = '030 `\c
+\csubinverse ^^e7{c@}c  \uccode`\^^e7= `\^^c7
+\catcode`\^^c7=11 \lccode`\^^c7= `\^^e7 \charsubdef `\^^c7 = '030 `\C
+\csubinverse ^^c7{c@}C  \uccode`\^^c7= `\^^c7
+\catcode`\^^e8=11 \lccode`\^^e8= `\^^e8 \charsubdef `\^^e8 = '022 `\e
+\csubinverse ^^e8{@gr@}e  \uccode`\^^e8= `\^^c8
+\catcode`\^^c8=11 \lccode`\^^c8= `\^^e8 \charsubdef `\^^c8 = '022 `\E
+\csubinverse ^^c8{@gr@}E  \uccode`\^^c8= `\^^c8
+\catcode`\^^e9=11 \lccode`\^^e9= `\^^e9 \charsubdef `\^^e9 = '023 `\e
+\csubinverse ^^e9{@ac@}e  \uccode`\^^e9= `\^^c9
+\catcode`\^^c9=11 \lccode`\^^c9= `\^^e9 \charsubdef `\^^c9 = '023 `\E
+\csubinverse ^^c9{@ac@}E  \uccode`\^^c9= `\^^c9
+\catcode`\^^ea=11 \lccode`\^^ea= `\^^ea \charsubdef `\^^ea = '136 `\e
+\csubinverse ^^ea{@hat@}e  \uccode`\^^ea= `\^^ca
+\catcode`\^^ca=11 \lccode`\^^ca= `\^^ea \charsubdef `\^^ca = '136 `\E
+\csubinverse ^^ca{@hat@}E  \uccode`\^^ca= `\^^ca
+\catcode`\^^eb=11 \lccode`\^^eb= `\^^eb \charsubdef `\^^eb = '177 `\e
+\csubinverse ^^eb{@um@}e  \uccode`\^^eb= `\^^cb
+\catcode`\^^cb=11 \lccode`\^^cb= `\^^eb \charsubdef `\^^cb = '177 `\E
+\csubinverse ^^cb{@um@}E  \uccode`\^^cb= `\^^cb
+\catcode`\^^ec=11 \lccode`\^^ec= `\^^ec \charsubdef `\^^ec = '022 '020
+\csubinverse ^^ec{@gr@}{^^P}  \uccode`\^^ec= `\^^cc
+\catcode`\^^cc=11 \lccode`\^^cc= `\^^ec \charsubdef `\^^cc = '022 `\I
+\csubinverse ^^cc{@gr@}I  \uccode`\^^cc= `\^^cc
+\catcode`\^^ed=11 \lccode`\^^ed= `\^^ed \charsubdef `\^^ed = '023 '020
+\csubinverse ^^ed{@ac@}{^^P}  \uccode`\^^ed= `\^^cd
+\catcode`\^^cd=11 \lccode`\^^cd= `\^^ed \charsubdef `\^^cd = '023 `\I
+\csubinverse ^^cd{@ac@}I  \uccode`\^^cd= `\^^cd
+\catcode`\^^ee=11 \lccode`\^^ee= `\^^ee \charsubdef `\^^ee = '136 '020
+\csubinverse ^^ee{@hat@}{^^P}  \uccode`\^^ee= `\^^ce
+\catcode`\^^ce=11 \lccode`\^^ce= `\^^ee \charsubdef `\^^ce = '136 `\I
+\csubinverse ^^ce{@hat@}I  \uccode`\^^ce= `\^^ce
+\catcode`\^^ef=11 \lccode`\^^ef= `\^^ef \charsubdef `\^^ef = '177 '020
+\csubinverse ^^ef{@um@}{^^P}  \uccode`\^^ef= `\^^cf
+\catcode`\^^cf=11 \lccode`\^^cf= `\^^ef \charsubdef `\^^cf = '177 `\I
+\csubinverse ^^cf{@um@}I  \uccode`\^^cf= `\^^cf
+\catcode`\^^f1=11 \lccode`\^^f1= `\^^f1 \charsubdef `\^^f1 = '176 `\n
+\csubinverse ^^f1{@til@}n   \uccode`\^^f1= `\^^d1
+\catcode`\^^d1=11 \lccode`\^^d1= `\^^f1 \charsubdef `\^^d1 = '176 `\N
+\csubinverse ^^d1{@til@}N   \uccode`\^^d1= `\^^d1
+\catcode`\^^f2=11 \lccode`\^^f2= `\^^f2 \charsubdef `\^^f2 = '022 `\o
+\csubinverse ^^f2{@gr@}o   \uccode`\^^f2= `\^^d2
+\catcode`\^^d2=11 \lccode`\^^d2= `\^^f2 \charsubdef `\^^d2 = '022 `\O
+\csubinverse ^^d2{@gr@}O   \uccode`\^^d2= `\^^d2
+\catcode`\^^f3=11 \lccode`\^^f3= `\^^f3 \charsubdef `\^^f3 = '023 `\o
+\csubinverse ^^f3{@ac@}o   \uccode`\^^f3= `\^^d3
+\catcode`\^^d3=11 \lccode`\^^d3= `\^^f3 \charsubdef `\^^d3 = '023 `\O
+\csubinverse ^^d3{@ac@}O   \uccode`\^^d3= `\^^d3
+\catcode`\^^f4=11 \lccode`\^^f4= `\^^f4 \charsubdef `\^^f4 = '136 `\o
+\csubinverse ^^f4{@hat@}o   \uccode`\^^f4= `\^^d4
+\catcode`\^^d4=11 \lccode`\^^d4= `\^^f4 \charsubdef `\^^d4 = '136 `\O
+\csubinverse ^^d4{@hat@}O   \uccode`\^^d4= `\^^d4
+\catcode`\^^f5=11 \lccode`\^^f5= `\^^f5 \charsubdef `\^^f5 = '176 `\o
+\csubinverse ^^f5{@til@}o   \uccode`\^^f5= `\^^d5
+\catcode`\^^d5=11 \lccode`\^^d5= `\^^f5 \charsubdef `\^^d5 = '176 `\O
+\csubinverse ^^d5{@til@}O   \uccode`\^^d5= `\^^d5
+\catcode`\^^f9=11 \lccode`\^^f9= `\^^f9 \charsubdef `\^^f9 = '022 `\u
+\csubinverse ^^f9{@gr@}u   \uccode`\^^f9= `\^^d9
+\catcode`\^^d9=11 \lccode`\^^d9= `\^^d9 \charsubdef `\^^d9 = '022 `\U
+\csubinverse ^^d9{@gr@}U   \uccode`\^^d9= `\^^d9
+\catcode`\^^fb=11 \lccode`\^^fb= `\^^fb \charsubdef `\^^fb = '136 `\u
+\csubinverse ^^fb{@hat@}u   \uccode`\^^fb= `\^^db
+\catcode`\^^db=11 \lccode`\^^db= `\^^fb \charsubdef `\^^db = '136 `\U
+\csubinverse ^^db{@hat@}U   \uccode`\^^db= `\^^db
+\catcode`\^^fc=11 \lccode`\^^fc= `\^^fc \charsubdef `\^^fc = '177 `\u
+\csubinverse ^^fc{@um@}u   \uccode`\^^fc= `\^^dc
+\catcode`\^^dc=11 \lccode`\^^dc= `\^^fc \charsubdef `\^^dc = '177 `\U
+\csubinverse ^^dc{@um@}U   \uccode`\^^dc= `\^^dc
+% iso latin 1 -- next two codes -- y acute accent 
+\catcode`\^^fd=11 \lccode`\^^fd= `\^^fd \charsubdef `\^^fd = '023 `\y
+\csubinverse ^^fd{@ac@}y   \uccode`\^^fd= `\^^dd
+\catcode`\^^dd=11 \lccode`\^^dd= `\^^fd \charsubdef `\^^dd = '023 `\Y
+\csubinverse ^^dd{@ac@}Y   \uccode`\^^dd= `\^^dd
+% some extra IBM PC characters
+\catcode`\^^b8=11 \lccode`\^^b8= `\^^b8 \charsubdef `\^^b8 = '177 `\y
+\csubinverse ^^b8{@um@}y   \uccode`\^^b8= `\^^98
+\catcode`\^^fa=11 \lccode`\^^fa= `\^^fa \charsubdef `\^^fa = '023 `\u
+\csubinverse ^^fa{@ac@}u   \uccode`\^^fa= `\^^da
+\catcode`\^^e5=\active 
+\catcode`\^^c5=\active 
+\catcode`\^^e6=\active 
+\catcode`\^^c6=\active 
+\catcode`\^^f7=\active 
+\catcode`\^^d7=\active 
+\catcode`\^^f8=\active 
+\catcode`\^^d8=\active 
+\catcode`\^^df=\active 
+\catcode`\^^a7=\active 
+\catcode`\^^a9=\active 
+\catcode`\^^a3=\active 
+\catcode`\^^bd=\active 
+\catcode`\^^be=\active 
+
+\def ^^e5{\aa }
+\def ^^c5{\AA }
+\def ^^e6{\ae }
+\def ^^c6{\AE }
+\def ^^f7{^^[}
+\def ^^d7{\OE }
+\def ^^f8{\o }
+\def ^^d8{\O }
+\def ^^df{\ss }
+\def ^^a7{\S }
+\def ^^a9{\copyright }
+\def ^^a3{\it\$} 
+\def ^^bd{!`}
+\def ^^be{?`}
+\def\oe{^^[}

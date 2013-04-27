@@ -1,0 +1,155 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% doc.macro.file{
+%    filename          = "astmhelp.tex",
+%    date              = "04/Oct/1998",
+%    last revision     = "26/Feb/1999",
+%    filetype          = "TeX",
+%    author            = "Davide MADRISAN",
+%    codetable         = "ISO/ASCII",
+%    checksumtype      = "line count",
+%    checksum          = "155",
+%    abstract          = "This file is a tutorial for the macros package 
+%                         'astmacro.tex', version 1.8.03m.
+%                         Read it and look at the DVI".
+% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input astmacro
+
+% (1) %%% FIRST PAGE MACROS AND ENVIRONMENTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Example:
+  \author{THE AUTHOR}
+  \headlinetitle{THIS IS THE TITLE THE HEADLINE}
+
+  \begin{doceye}
+      Acc.~Sc.~Torino - Memorie Sc.~Fis.\\
+      25 ~{\rm(}1998{\/\rm)}, 1-25, 3 ff, 2 tabb.
+  \end{doceye}
+
+  \subject{Subject of the paper}
+  \title{Main title at the top of the first page}
+
+  \begin{authornote}
+      Memoria del Socio nazionale residente THE AUTHOR*\\
+      presentata nell'adunanza del 1 Gennaio 1998
+  \end{authornote}
+ 
+  \begin{firstpagenote}
+      1991 Mathematics Subject Classification. Primary 33C25.\\
+      *Dipartimento di Matematica dell'Università, Torino, Italy.\\
+      This work was supported by the Consiglio Nazionale delle Ricerche of Italy.
+  \end{firstpagenote}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% (2) %%% ABSTRACT and END OF ABSTRACT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Example:
+  \begin{abstract}
+      Abstract\\
+      This paragraph is automatically formatted by the environment 
+      {\tt\char92begin\lb abstract\rb$\dots$\char92end\lb abstract\rb}.
+  \end{abstract}
+ 
+  \medskip
+  \begin{abstract}
+      Riassunto\\
+      The same environment (note the use of {\tt\char92\char92}\/).
+  \end{abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% (3) %%% SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Examples: 
+  \section{1. Introduction, using the macro {\tt\char92section}}
+
+  Next ``Lemma'' and ``Proof'' are an example of the two environments:
+  \itemitem{$-$} 
+      {\tt\char92begin\lb proclaim\rb$\dots$\char92end\lb proclaim\rb},
+  \itemitem{$-$} 
+      {\tt\char92begin\lb proof\rb$\dots$\char92end\lb proof\rb}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% (4) %%% PROCLAIM, PROOF, MATHNO and VEOP, BEOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Example: 
+  \begin{proclaim}
+      Lemma 1.1\\
+      Let $v, w \in V$ be such that $w \in \gamma(v)$ holds almost everywhere in
+      ${\Omega}$, where $\gamma:{{\rm I}\!{\rm R}} \to 2^{{{\rm I}\!{\rm R}}}$
+      is a maximal monotone graph. Then
+      $$
+      \int_{\Omega} \nabla v \cdot \nabla w \geq 0.
+      \mathno{1.1}
+      $$
+
+  \begin{proof}
+      Proof\\
+      Let $\mu > 0$ be arbitrary and note that 
+      $w + \mu v \in (\mu {\cal I} + \gamma)(v)$.
+      Then $v = (\mu {\cal I} + \gamma)^{-1} (w +\mu v)$.
+      Since $(\mu {\cal I} + \gamma)^{-1}$ is Lipschitz continuous $\dots$
+      $$
+      \int_{\Omega} \nabla v \cdot \nabla (w + \mu v) =
+      \int_{\Omega} \vert \nabla(w + \mu v)\vert^2
+      \big((\mu {\cal I} + \gamma)^{-1}\big)^\prime (w + \mu v)  \geq 0. 
+      \mathno{1.2}
+      $$
+      Letting $ \mu\searrow 0 $ in $\dots$
+  \end{proof}
+  \end{proclaim}
+%
+% \veop % void square point
+% \beop % black square point
+%
+% (5) %%% SMALLSECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \begin{smallsection}
+      Now the environment 
+      {\tt\char92begin\lb smallsection\rb$\dots$\char92end\lb smallsection\rb}.\par
+      This is quite useful for long quotations, and this paragraph is an 
+      example of its use. 
+      You can also use a {\tt\char92veop} (\veop)
+      or a {\tt\char92beop} (\beop) to end your paragraphs.
+  \end{smallsection}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% (6) %%% FIGURE MACROS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Example:
+  \midspace{7cm}{Figure 1}
+      {The macros {\tt\char92midspace\lb\rb\lb\rb\lb\rb} and 
+      {\tt\char92topspace\lb\rb\lb\rb\lb\rb}}
+% \topspace{7cm}{Figure 1}{The function $F(x)$}
+%
+% You can use the macros '\topfigure' and '\midfigure' to insert images in your
+% documents (for instance (e)ps files generated with MapleV).
+% For more information see the in the macros file astmacro, subsection 6.2.
+% Example:
+% \legendvoffset = 12pt plus 4pt minus 4pt
+% \epstopfigure{figure.ps}{8cm}{4.5cm}{2.2cm}{1.1}{Legend of the image}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% (7) %%% FOOTNOTE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Example:
+  Now an example of a footnote at the bottom of the page
+  \begin{footnote}
+      I am a footnote.
+  \end{footnote}
+  using the environment 
+  {\tt\char92begin\lb footnote\rb$\dots$\char92end\lb footnote\rb}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% (8) %%% REFERENCES (BIBLIOREF and BIBITEM) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Example:
+  \section{2. The use of {\tt\char92biblioref\lb\rb\lb\rb}}
+
+  We consider the following two-term uniform asymptotic representation, due to 
+  \biblioref{Olver}{10, 11, 1 (9.3.35)} $\dots$
+
+  \section{References, or the macro {\tt\char92bibitem\lb\rb\lb\rb}}
+
+  \bibitem{1}{J.P.~Aubin {\rm ~and~} I.~Ekeland,}
+      {Applied nonlinear analysis,} 
+      {Pure Appl. Math. {\bf 64}, Wiley, New York 1984.}
+
+  \bibitem{2}{V. Barbu,}
+      {Nonlinear semigroups and differential equations in Banach spaces,}
+      {Noordhoff International Publishing, Leyden 1976.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bye

@@ -1,0 +1,562 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% tex.macro.file{
+%     nome              = ciscolike.sty,
+%     versione          = 0.61
+%     data creazione    = 10/GEN/2002,
+%     ultima revisione  = 19/GEN/2002,
+%     tipo di file      = plain TeX,
+%     autore            = Davide MADRISAN,
+%     contenuto         = Macro per la redazione dei progetti di dettaglio Atlanet.
+% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% by MDTeX!96!02 %%%
+
+\input plain.tex
+% \input epsf                 % see <file:/usr/share/texmf/tex/plain/dvips/epsf.tex>
+
+% \input xy
+% \xyoption{curve}
+% \xyoption{frame}
+% \xyoption{line}
+% \xyoption{rotate}
+
+
+% current catcode of '!' and '@' saved
+\xdef\recoverExclaimCode{\catcode`\noexpand\! = \the\catcode`\!}
+\xdef\recoverAtCode{\catcode`\noexpand\@ = \the\catcode`\@}
+\catcode`! = 11                     % in order to define 'private' control sequences
+\def\!restoreDefaults{\recoverExclaimCode \let\recoverExclaimCode\undefined}
+
+\def\!fmtName{atlaTeX}                                          % format name and...
+\def\!fmtVersion{0.05}                                           % ...version number
+\def\!fmtFile{atlanet.sty}
+
+\newlinechar = `\^^J
+\ifx\!macrosLoaded\undefined\let\next\relax \let\!macrosLoaded\relax
+\else\message{^^J%
+    !OOPS... \!fmtFile\space already loaded %
+    (duplicate loading process skipped)^^J^^J}%
+    \gdef\next{\!restoreDefaults\endinput}\fi\next
+
+\def\wlog{} \def\!wlog{\immediate\write16}
+\def\!logo{\!wlog{%                      % atlaTeX logo (output on file \jobname.log)
+    This is \!fmtName, Version \!fmtVersion\space -- by Davide MADRISAN}}\!logo
+\def\!shouldBeFmt{plain}
+\def\!lookAtFormat{                                % this package requires plain-TeX
+    \ifx\!shouldBeFmt\fmtname%
+    \else\!wlog{^^J%
+        !OOPS... warning! - I'm not running under Plain TeX!^^J%
+        Plain TeX it's strictly required to use safely this package.^^J%
+        Please stop right now and add the \string\include\space plain command^^J%
+        at the beginning of your file \jobname.tex^^J}\fi}\!lookAtFormat
+
+\catcode`@ = 11
+\def\alloc@#1#2#3#4#5{%     % redefinition of plain-Tex macro '\alloc@' (not \outer)
+    \global\advance\count1#1by\@ne
+    \ch@ck#1#4#2%                                     % make sure there's still room
+    \allocationnumber = \count1#1%
+    \global#3#5 = \allocationnumber}
+
+\output{\atlaTeXoutput}
+\def\atlaTeXoutput{%
+    \shipout\vbox{%
+        \if!titlePage\bgroup\hfuzz = 70pt\makeheadline\egroup\else\makeheadline\fi
+        \pagebody\makefootline}%
+    \advancepageno
+    \ifnum\outputpenalty>-\@MM \else\dosupereject\fi}
+\def\pagebody{\vbox to\vsize{\boxmaxdepth\maxdepth \pagecontents}}
+\def\makeheadline{%
+    \vbox to\z@{%
+        \vskip-22.5\p@\line{\vbox to8.5\p@{}\the\headline}\vss}\nointerlineskip}
+\def\makefootline{%
+    \baselineskip44\p@\lineskiplimit\z@\line{\the\footline}}
+\def\dosupereject{%
+    \ifnum\insertpenalties>\z@                        % something is being held over
+        \line{}\kern-\topskip\nobreak\vfill\supereject\fi}
+\def\pagecontents{%
+    \ifvoid\topins\else\unvbox\topins\fi
+    \dimen@=\dp\@cclv \unvbox\@cclv                                % open up \box255
+    \ifvoid\footins\else                                  % footnote info is present
+        \vskip\skip\footins\footnoterule\unvbox\footins\fi
+    \ifr@ggedbottom\kern-\dimen@\vfil\fi}
+\recoverAtCode
+
+\pageno = 1                                           % the default page number is 1
+\globaldefs = 0                                        % local variables are allowed
+\tracingstats = 1                                          % TeX memory usage report
+
+\everyjob{%                            % in case you're using the format (dump) file
+    \!logo\!lookAtFormat
+    \pageno = 1
+    \globaldefs = 0
+    \tracingstats = 1}
+
+
+\magnification\magstep 0
+\hsize        = 173true mm                       % line length for your page of text
+\vsize        = 216true mm                                    % vertical page height
+\hoffset      =  -7true mm                    % horizontal offset from the left edge
+\voffset      =  12true mm                       % vertical offset from the top edge
+\topskip      =  10true mm           % space between headline and first line of text
+\parindent    =   0true mm                      % width of the paragraph indentation
+\parskip      =   6true pt                      % adjusts spacing between paragraphs
+\mathsurround =   0true pt % space around formulas which occur within a line of text
+\tolerance    =   400
+\nonfrenchspacing
+\newdimen\leftskipdimension \leftskipdimension = 26true mm
+\newdimen\rightskipdimension \rightskipdimension = 13true mm
+\advance\leftskip by \leftskipdimension
+% plus1fill for raggedright + no hyphenation
+\advance\rightskip by \rightskipdimension plus1fill
+
+\newfam\scfam                                                     % small cap family
+\newfam\bsfam                                              % slanted boldface family
+\newfam\tbfam                                               % typewriter bold family
+\newfam\sffam                                                    % sans serif family
+\newfam\sfbfam                                              % sans serif bold family
+\newfam\sfifam                                            % sans serif italic family
+
+\newskip\ttglue
+
+\font\!titlefont = phvr8r at 23pt  % cmss23
+
+\font\sixteenbi = cmmib14
+\font\sixteenbf = cmbx14
+\font\sixteensy = cmsy14
+\font\sixteenex = cmex14
+\font\sixteenss = phvr8r at 16pt  % cmss14
+\font\sixteensb = phvb8r at 16pt  % phvb8rn at 16pt  % cmssbx14
+\font\sixteensi = cmssi14
+\skewchar\sixteensy = '60
+
+\font\eleveni  = cmmi11                                                % math italic
+\font\elevensy = cmsy11                                               % math symbols
+\font\elevenex = cmex11                                             % math extension
+\font\elevenbi = cmmib11                                      % math boldface italic
+\font\elevenrm = cmr11                                                  % text roman
+\font\elevenit = cmti11                                                % text italic
+\font\elevensl = cmsl11                                         % text slanted roman
+\font\eleventt = pcrr8r at 11pt  % cmtt11                          % text typewriter
+\font\eleventb = pcrb8r at 11pt                               % text typewriter bold
+\font\elevenbf = cmbx11                                     % text boldface extended
+\font\elevensc = cmcsc11                                            % text small cap
+\font\elevenbs = cmbxsl11                                    % text slanted boldface
+\font\elevenss = phvr8r at 11pt  % cmss11
+\font\elevensb = phvb8r at 11pt  % cmssbx11
+\font\elevensi = cmssi11
+\skewchar\eleveni = '177\skewchar\elevensy = '60
+\hyphenchar\eleventt = -1
+
+\font\teni  = cmmi10
+\font\tensy = cmsy10
+\font\tenex = cmex10
+\font\tenbi = cmmib10
+\font\tenrm = cmr10
+\font\tenit = cmti10
+\font\tensl = cmsl10
+\font\tentt = pcrr8r at 10pt  % cmtt10
+\font\tentb = pcrb8r at 10pt
+\font\tenbf = cmbx10
+\font\tensc = cmcsc10
+\font\tenbs = cmbxsl10
+\font\tenss = phvr8r at 10pt  % cmss10
+\font\tensb = phvb8r at 10pt  % cmssbx10
+\font\tensi = cmssi10
+\skewchar\teni = '177\skewchar\tensy = '60
+\hyphenchar\tentt = -1
+
+\font\ninei  = cmmi9
+\font\ninesy = cmsy9
+\font\nineex = cmex9
+\font\ninebi = cmmib9
+\font\ninerm = cmr9
+\font\nineit = cmti9
+\font\ninesl = cmsl9
+\font\ninett = pcrr8r at 9pt  % cmtt9
+\font\ninetb = pcrb8r at 9pt
+\font\ninebf = cmbx9
+\font\ninesc = cmcsc9
+\font\ninebs = cmbxsl9
+\font\niness = phvr8r at 9pt  % cmss9
+\font\ninesb = phvb8r at 9pt  % cmssbx9
+\font\ninesi = cmssi9
+\skewchar\ninei = '177\skewchar\ninesy = '60
+\hyphenchar\ninett = -1
+
+\font\eighti  = cmmi8
+\font\eightsy = cmsy8
+\font\eightex = cmex8
+\font\eightbi = cmmib8
+\font\eightrm = cmr8
+\font\eightit = cmti8
+\font\eightsl = cmsl8
+\font\eighttt = pcrr8r at 8pt  % cmtt8
+\font\eighttb = pcrb8r at 8pt
+\font\eightbf = cmbx8
+\font\eightsc = cmcsc8
+\font\eightbs = cmbxsl8
+\font\eightss = phvr8r at 8pt  % cmss8
+\font\eightsb = phvb8r at 8pt  % cmssbx8
+\font\eightsi = cmssi8
+\skewchar\eighti = '177\skewchar\eightsy = '60
+\hyphenchar\eighttt = -1
+
+\font\sevenrm = cmr7
+\font\seveni  = cmmi7
+\font\sevensy = cmsy7
+\font\sevenex = cmex7
+\font\sevenss = phvr8r at 7pt  % cmss7
+\skewchar\seveni = '177\skewchar\sevensy = '60
+
+\font\sixrm = cmr6
+\font\sixit = cmti6
+\font\sixbf = phvb8rn at 6pt  % cmbx6
+\font\sixbi = cmmib6
+\font\sixi  = cmmi6
+\font\sixsy = cmsy6
+\font\sixex = cmex6
+\skewchar\sixi = '177\skewchar\sixsy = '60
+
+\font\fiverm = cmr5
+\font\fivei  = cmmi5
+\font\fivesy = cmsy5
+\skewchar\fivei = '177\skewchar\fivesy = '60
+
+\def\sixteenPoint{%
+    \def\rm{\fam0\sixteenbf}%
+    \textfont0 = \sixteenbf\scriptfont0 = \eightbf\scriptscriptfont0 = \sixbf%
+    \textfont1 = \sixteenbi\scriptfont1 = \eightbi\scriptscriptfont1 = \sixbi%
+    \def\mit{\fam1}%
+    \def\oldstyle{\fam1\twelvebi}%
+    \textfont2 = \sixteensy\scriptfont2 = \eightsy\scriptscriptfont2 = \sixsy%
+    \def\cal{\fam2}%
+    \textfont3 = \sixteenex\scriptfont3 = \eightex\scriptscriptfont3 = \sixex%
+    \def\sf{\fam\sffam\sixteenss}\textfont\sffam = \sixteenss%
+    \def\sfb{\fam\sfbfam\sixteensb}\textfont\sfbfam = \sixteensb%
+    \def\sfi{\fam\sfifam\sixteensi}\textfont\sfifam = \sixteensi%
+    \normalbaselineskip = 17pt%
+    \normalbaselines\rm}
+
+\def\elevenPoint{%
+    \def\rm{\fam0\elevenrm}%
+        \textfont0 = \elevenrm\scriptfont0 = \eightrm\scriptscriptfont0 = \sixrm%
+    \textfont1 = \eleveni \scriptfont1 = \eighti \scriptscriptfont1 = \sixi%
+    \textfont2 = \elevensy\scriptfont2 = \eightsy\scriptscriptfont2 = \sixsy%
+    \textfont3 = \elevenex\scriptfont3 = \elevenex\scriptscriptfont3 = \elevenex%
+    \def\it{\fam\itfam\elevenit}\textfont\itfam = \elevenit%
+    \def\sl{\fam\slfam\elevensl}\textfont\slfam = \elevensl%
+    \def\tt{\fam\ttfam\eleventt}\textfont\ttfam = \eleventt%
+    \def\tb{\fam\tbfam\eleventb}\textfont\tbfam = \eleventb%
+    \def\bf{\fam\bffam\elevenbf}\textfont\bffam = \elevenbf%
+    \def\sc{\fam\scfam\elevensc}\textfont\scfam = \elevensc%
+    \def\bs{\fam\bsfam\elevenbs}\textfont\bsfam = \elevenbs%
+    \def\sf{\fam\sffam\elevenss}\textfont\sffam = \elevenss%
+    \def\sfb{\fam\sfbfam\elevensb}\textfont\sfbfam = \elevensb%
+    \def\sfi{\fam\sfifam\elevensi}\textfont\sfifam = \elevensi%
+    \tt\ttglue = .5em plus.25em minus.15em%
+    \normalbaselineskip = 12.5pt%
+    \setbox\strutbox = \hbox{\vrule height8.5pt depth3.5pt width0pt}%
+    \normalbaselines\rm}
+
+\def\tenPoint{%
+    \def\rm{\fam0\tenrm}%
+        \textfont0 = \tenrm\scriptfont0 = \sevenrm\scriptscriptfont0 = \fiverm%
+    \textfont1 = \teni \scriptfont1 = \seveni \scriptscriptfont1 = \fivei%
+    \textfont2 = \tensy\scriptfont2 = \sevensy\scriptscriptfont2 = \fivesy%
+    \textfont3 = \tenex\scriptfont3 = \tenex\scriptscriptfont3 = \tenex%
+    \def\it{\fam\itfam\tenit}\textfont\itfam = \tenit%
+    \def\sl{\fam\slfam\tensl}\textfont\slfam = \tensl%
+    \def\tt{\fam\ttfam\tentt}\textfont\ttfam = \tentt%
+    \def\tb{\fam\tbfam\tentb}\textfont\tbfam = \tentb%
+    \def\bf{\fam\bffam\tenbf}\textfont\bffam = \tenbf%
+    \def\sc{\fam\scfam\tensc}\textfont\scfam = \tensc%
+    \def\bs{\fam\bsfam\tenbs}\textfont\bsfam = \tenbs%
+    \def\sf{\fam\sffam\tenss}\textfont\sffam = \tenss%
+    \def\sfb{\fam\sfbfam\tensb}\textfont\sfbfam = \tensb%
+    \def\sfi{\fam\sfifam\tensi}\textfont\sfifam = \tensi%
+    \tt\ttglue = .5em plus.25em minus.15em%
+    \normalbaselineskip = 12.5pt%
+    \setbox\strutbox = \hbox{\vrule height8.5pt depth3.5pt width0pt}%
+    \normalbaselines\rm}
+\tenPoint
+
+\def\ninePoint{%
+    \def\rm{\fam0\ninerm}%
+        \textfont0 = \ninerm\scriptfont0 = \sixrm\scriptscriptfont0 = \fiverm%
+    \textfont1 = \ninei \scriptfont1 = \sixi  \scriptscriptfont1 = \fivei%
+    \textfont2 = \ninesy\scriptfont2 = \sixsy \scriptscriptfont2 = \fivesy%
+    \textfont3 = \nineex\scriptfont3 = \nineex\scriptscriptfont3 = \nineex%
+    \def\it{\fam\itfam\nineit}\textfont\itfam = \nineit%
+    \def\sl{\fam\slfam\ninesl}\textfont\slfam = \ninesl%
+    \def\tt{\fam\ttfam\ninett}\textfont\ttfam = \ninett%
+    \def\tb{\fam\tbfam\ninetb}\textfont\tbfam = \ninetb%
+    \def\bf{\fam\bffam\ninebf}\textfont\bffam = \ninebf%
+    \def\sc{\fam\scfam\ninesc}\textfont\scfam = \ninesc%
+    \def\bs{\fam\bsfam\ninebs}\textfont\bsfam = \ninebs%
+    \def\sf{\fam\sffam\niness}\textfont\sffam = \niness%
+    \def\sfb{\fam\sfbfam\ninesb}\textfont\sfbfam = \ninesb%
+    \def\sfi{\fam\sfifam\ninesi}\textfont\sfifam = \ninesi%
+    \tt\ttglue = .5em plus.25em minus.15em%
+    \normalbaselineskip = 11pt
+    \setbox\strutbox = \hbox{\vrule height8pt depth3pt width0pt}%
+    \normalbaselines\rm}
+
+\def\eightPoint{%
+    \def\rm{\fam0\eightrm}%
+        \textfont0 = \eightrm\scriptfont0 = \sixrm\scriptscriptfont0 = \fiverm%
+    \textfont1 = \eighti \scriptfont1 = \sixi   \scriptscriptfont1 = \fivei%
+    \textfont2 = \eightsy\scriptfont2 = \sixsy  \scriptscriptfont2 = \fivesy%
+    \textfont3 = \eightex\scriptfont3 = \eightex\scriptscriptfont3 = \eightex%
+    \def\it{\fam\itfam\eightit}\textfont\itfam = \eightit%
+    \def\sl{\fam\slfam\eightsl}\textfont\slfam = \eightsl%
+    \def\tt{\fam\ttfam\eighttt}\textfont\ttfam = \eighttt%
+    \def\tb{\fam\tbfam\eighttb}\textfont\tbfam = \eighttb%
+    \def\bf{\fam\bffam\eightbf}\textfont\bffam = \eightbf%
+    \def\sc{\fam\scfam\eightsc}\textfont\scfam = \eightsc%
+    \def\bs{\fam\bsfam\eightbs}\textfont\bsfam = \eightbs%
+    \def\sf{\fam\sffam\eightss}\textfont\sffam = \eightss%
+    \def\sfb{\fam\sfbfam\eightsb}\textfont\sfbfam = \eightsb%
+    \def\sfi{\fam\sfifam\eightsi}\textfont\sfifam = \eightsi%
+    \tt\ttglue = .5em plus.25em minus.15em%
+    \normalbaselineskip = 9pt
+    \setbox\strutbox = \hbox{\vrule height8pt depth3pt width0pt}%
+    \normalbaselines\rm}
+
+\def\textrm#1{\bgroup\rm#1\egroup}  % typeset text in roman typeface
+\def\texttt#1{\bgroup\tt#1\egroup}  % typeset text in typewriter typeface
+\def\texttb#1{\bgroup\tb#1\egroup}  % typeset text in typewriter bold typeface
+\def\textbf#1{\bgroup\bf#1\egroup}  % typeset text in bold typeface
+\def\textbs#1{\bgroup\bs#1\egroup}  % typeset text in italic bold typeface
+\def\textit#1{\bgroup\it#1\egroup}  % typeset text in italic shape
+\def\textsl#1{\bgroup\sl#1\egroup}  % typeset text in slanted shape
+\def\textsc#1{\bgroup\sc#1\egroup}  % typeset text in small caps shape
+
+
+\def\!ifUndefined#1{%          % \!ifUndefined{ARG} TRUE ACTION\else FALSE ACTION\fi
+    \expandafter\ifx\csname#1\endcsname\relax}
+
+
+\newif\if!titlePage\!titlePagefalse
+\def\!oddHeadline{%
+    \vbox{\hbox to\hsize{%
+        \ninePoint%
+        \sfb Atlanet\quad--\quad Service Provisioning\hfil%
+         Piano Operativo di Dettaglio}%
+        \smallskip\hrule height.3pt}}%
+\def\!evenHeadline{%
+    \vbox{\hbox to\hsize{%
+        \ninePoint\sfb Piano Operativo di Dettaglio\hfil
+         Atlanet\quad--\quad Service Provisioning}%
+        \smallskip\hrule height.3pt}}%
+\headline = {%
+    \if!titlePage%
+        \bgroup\setbox0 = \hbox{\vrule height5.5truemm width60truemm depth 0pt}%
+        \advance\hsize by 13truemm%
+        \hbox to\hsize{\hss\unhbox0}\egroup%
+    \else\ifodd\pageno\!oddHeadline\else\!evenHeadline\fi\fi}
+
+\def\!today{%
+    \the\day\space%
+    \ifcase\month%
+        \or gennaio\or febbraio\or marzo\or aprile\or maggio\or giugno%
+        \or luglio\or agosto\or settembre\or ottobre\or novembre\or dicembre\fi%
+    \space\number\year}
+
+% \def\docversion{{\sfb?}}
+
+\def\!oddFootline{%
+    \vbox{\hbox to\hsize{%
+       \ninePoint\sf Davide Madrisan\hfill\!documentTitle\qquad{\sfb\folio}}}}
+\def\!evenFootline{%
+    \vbox{\hbox to\hsize{%
+        \ninePoint\sf{\sfb\folio}\qquad file~\jobname%
+        \!ifUndefined{docversion}%
+        \else\enskip(versione~\docversion)\fi,%
+        \enskip~\!ifUndefined{date}\!today\else\date\fi%
+        \hfill Davide Madrisan}}}
+\def\!myData#1#2{%
+    \hbox to\hsize{\ninePoint\sf%
+        \vbox{\halign{##\hfil&\strut##\hfil\cr#1\crcr}}\hfil
+        \vbox{\halign{##\hfil&\strut##\hfil\cr#2\crcr}}}}
+\footline = {%
+    \if!titlePage%
+        \!myData{\niness Delivery Manager: Davide Madrisan\cr
+            \noalign{\smallskip}
+            \sevenss Torino, c.so Marconi~20 - p.6, s.42d\cr
+            \sevenss email: davide.madrisan@atlanet.it\cr
+            \sevenss tel.~+39.01100.61253\cr}{%
+            {\ninePoint\sf\!documentTitle\qquad{\sfb\folio}}}%
+        \global\!titlePagefalse%
+    \else\ifodd\pageno\!oddFootline\else\!evenFootline\fi\fi}
+
+
+%\newif\if!writingcontents\!writingcontentsfalse
+%\newwrite\!contents
+%
+%\catcode`@ = 11
+%\def\rdotfill{\leaders\hbox{$\m@th\mkern2.1mu.\mkern2.1mu$}\hfill}
+%\recoverAtCode
+%\newdimen\cntrightoffset\cntrightoffset = 65mm
+%
+%\long\def\contents{\!specialchapter{Indice}\par}
+%
+%\def\cntspcchapter#1#2{%
+%    \vskip 18pt plus 6pt minus 6pt%
+%    \hbox to\hsize{\tenbf#1\rdotfill\hbox to\cntrightoffset{\hfil#2}}}
+%
+%\def\cntsection#1#2#3#4{%
+%    \bgroup\tenrm
+%    % "99.9" tells to TeX to reserve a space for a maximum of 99 chapters
+%    % and 9 sections (should be enough...)
+%    \setbox0 = \hbox{99.9\hskip.8em}\parindent = \wd0\rightskip = \cntrightoffset
+%    \setbox0 = \hbox{#1.#2}
+%    \exhyphenpenalty = 10000                                        % no hyphenation
+%    \endgraf\noindent\hskip\wd0\llap{#1.#2}\hskip-\wd0
+%    \hangindent\parindent\indent{#3}\rdotfill\rlap{\hbox to\rightskip{\hfil#4}}
+%    \smallskip\egroup}
+%
+%\def\section!to!contents#1#2#3#4{%
+%    \write\!contents{%
+%        \string\cntsection\string{#1\string}\string{#2\string}\string{#3\string}%
+%        \string{#4\string}}}
+%
+%\def\cntsubsection#1#2#3#4#5{
+%    \bgroup\tenrm
+%    \setbox0 = \hbox{99.9\hskip.8em99.9.9\hskip.8em}
+%    \parindent = \wd0\rightskip = \cntrightoffset
+%    \setbox0 = \hbox{99.9\hskip.8em#1.#2.#3}
+%    \exhyphenpenalty = 10000
+%    \endgraf\noindent\hskip\wd0\llap{#1.#2.#3}\hskip-\wd0%
+%    \hangindent\parindent\indent{#4}\rdotfill\rlap{\hbox to\rightskip{\hfil#5}}%
+%    \smallskip\egroup}
+%
+%\def\subsection!to!contents#1#2#3#4#5{%
+%    \write\!contents{%
+%        \string\cntsubsection\string{#1\string}\string{#2\string}\string{#3\string}%
+%        \string{#4\string}\string{#5\string}}}
+%
+%\def\makecontents{%                          % starts the creation of the index file
+%    \immediate\openout\!contents = \jobname.cnt%
+%    \global\!writingcontentstrue%
+%    \immediate\write\!contents{\string\contents}%
+%    \immediate\write\!contents{}%
+%    \immediate\write\!contents{%
+%        \string\cntspcchapter\string{Indice\string}%
+%        \string{\string\tenbs\string{\string}i\string}}
+%    \!wlog{File for contents: '\jobname.cnt'}}
+
+
+\newcount\!nfigure \!nfigure = 0
+
+\newdimen\!titleruledimension
+\!titleruledimension = \hsize
+\advance\!titleruledimension by -\leftskipdimension
+\def\title#1#2{%
+    \gdef\!documentTitle{#1}
+    \global\!titlePagetrue
+    \bgroup\topskip = 45truemm
+    \hbox{\vtop{%
+        \leftskip = \leftskipdimension\rightskip = 0pt plus1fill%
+        \!titlefont#1}}%
+    \hbox{%
+        \hbox to\leftskipdimension{\hfill}%
+        \hbox to\!titleruledimension{\leaders\hrule height.9pt\hfill}}%
+    \vskip2\bigskipamount
+    \hbox{\vtop{%
+        \leftskip = 0pt\rightskip = 0pt plus1fill%
+        \sixteenPoint\sfb#2\medskip}}\egroup}
+
+\def\section#1{%
+    \goodbreak%
+    \hbox{\vtop{\leftskip = 0pt\rightskip = 0pt plus1fill\sixteenPoint\sfb#1}}%
+    \nobreak\medskip\noindent\ignorespaces}
+\def\endsection{\vskip2\bigskipamount}
+
+\def\subsection#1{%
+    \goodbreak%
+    \hbox{\vtop{\leftskip = 0pt\rightskip = 0pt plus1fill\sixteenPoint\sf#1}}%
+    \nobreak\medskip\noindent\ignorespaces}
+\let\endsubsection = \endsection
+
+\def\subsubsection#1{%
+    \goodbreak%
+    \hbox{\vtop{\leftskip = 0pt\rightskip = 0pt plus1fill\elevenPoint\sf#1}}%
+    \nobreak\smallskip\noindent\ignorespaces}
+\let\endsubsubsection = \bigskip
+
+\chardef\other = 12
+\def\makeActive#1{\catcode`#1 = \active\ignorespaces}
+\def\uncatCodeSpecials{\def\do##1{\catcode`##1 = \other}\dospecials}
+\def\removeLastBox{\setbox0 = \lastbox}
+% '\def\newline' (end-of-line def) can be customized, for instance:
+%     \newcount\lineNum\lineNum = 0
+%     \def\newline{%
+%         \advance\lineNum by 1
+%         \endgraf\noindent\leavevmode\llap{\sevenrm\the\lineNum.\ \ }}
+%
+% default is:
+     \def\newline{\endgraf\noindent}
+%\def\newline{\endgraf\noindent\leavevmode\llap{\quad}}
+{\obeyspaces\gdef\tabtospaces{\ \ \ }}                            % 1 tab = 3 spaces
+% command to be executed before and after each verbatim block
+\newtoks\everyVerbatimBegin\everyVerbatimBegin = {\relax}
+\newtoks\everyVerbatimEnd\everyVerbatimEnd = {\relax}
+\newskip\verbatimBaselineskip\verbatimBaselineskip = \baselineskip
+\let\verbatimFont = \tt                      % font to be used in the verbatim block
+
+\bgroup
+    \makeActive\^^M \makeActive\^^I %
+    \gdef\setupVerbatim{%
+        \makeActive\^^M \let^^M = \newline%                    % redefinition of ^^M
+        \makeActive\^^I \let^^I = \tabtospaces%                    % tab into spaces
+        \catcode`\@ = 0 \uncatCodeSpecials%             % no more special characters
+        \parskip = 0pt \baselineskip = \verbatimBaselineskip%
+        \obeyspaces\frenchspacing}
+\egroup
+\def\@{@}                                 % "@" can be used in \verbatim typing "@@"
+\def\verbatim{\endgraf\bgroup\the\everyVerbatimBegin\setupVerbatim\verbatimFont}
+\def\endverbatim{\removeLastBox\egroup{\the\everyVerbatimEnd}}
+
+\def\verbindent{%
+    \bgroup\everyVerbatimBegin = {%
+        \medskip\advance\leftskip by4truemm%
+        \hfuzz = \rightskipdimension%
+        \verbatimBaselineskip = 0.7\baselineskip%
+        \eightPoint\let\verbatimFont = \tt}%
+    \verbatim}
+\def\endverbindent{\everyVerbatimEnd = {\smallskip}\endverbatim\egroup}
+
+\def\verbline{\bgroup\setupVerbatim\verbatimFont}
+\def\endverbline{\egroup}
+\def\nullhbox{\hbox{}}
+
+\def\figure{\goodbreak\vskip1.5\bigskipamount
+   \hbox to\hsize{\leaders\hrule height.2pt\hfill}\nobreak\medskip}
+\def\endfigure{\nobreak\medskip\hbox to\hsize{\leaders\hrule height.2pt\hfill}
+    \nobreak\vskip1.5\bigskipamount}
+
+
+% definizioni di parentesi quadre utili per bibliografia
+\newbox\osqrbracket \newbox\csqrbracket
+\setbox\osqrbracket =
+    \hbox{\hskip.5pt\lower2pt\hbox{\vbox{\hrule height.3pt%
+    \hbox{\vrule height9pt width.3pt\hskip2.5pt}\hrule height.3pt}}}
+\setbox\csqrbracket =
+    \hbox{\lower2pt\hbox{\vbox{\hrule height.3pt%
+    \hbox{\hskip2.5pt\vrule height9pt width.3pt}\hrule height.3pt}}\hskip.5pt}
+
+\outer\def\bye{%
+    \vfill\hbox{\vtop{%
+        \leftskip = 0pt plus1fill\rightskip = 0pt%
+        \eightPoint\it\parskip=3pt
+        Compilato con {\it `ciscolike.sty'}
+        per {\rm[}pdf\/{\rm]}$\!$\TeX{}\par
+        Copyright~\raise0em\hbox{\rm\copyright} 2002 by Davide Madrisan
+        \smallskip tecnologie utilizzate 100\% Microsoft Free}}
+%       Run through
+%       {\easyfont E\kern-1pt\lower.4ex\hbox{A}S\lower.4ex\hbox{Y}}\TeX{}
+%       on \!today{} at \thetime
+    \supereject\end}
+
+
+
+\!restoreDefaults

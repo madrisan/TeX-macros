@@ -1,0 +1,146 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% @TeX-file{
+%    author            = "Davide MADRISAN",
+%    filename          = "verbcn.tex",
+%    version           = "3.4b",
+%    date              = "16/Mag/1999",
+%    copyright         = "This file copyright by Davide Madrisan",
+%    codetable         = "ISO/ASCII",
+%    checksumtype      = "line count",
+%    checksum          = "146",
+%    dependencies      = "plain.tex",
+%    abstract          = "This package implements a verbatim environment. It is
+%                         intended to offer a good interface to programmers that
+%                         need to insert verbatim text or files into TeX documents".
+% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% RESTRICTIONS: the verbatim macros are provided free of charge without warranty of
+% any kind. They may be distributed freely provided that the recipients also acquire
+% the right to distribute them freely. The notices to this effect must be preserved
+% when the files are distributed. If you want to change something, change the 
+% filename from 'verbcn.tex' to something else and indicate any changes in the file
+% itself, or else remove my name from the file completely.
+
+\def\shouldbefmt{plain}        % controllo precauzionale del formato di compilazione
+\newlinechar = `\^^J
+\def\lookatformat{                   % this package requires plain TeX to run safety
+    \ifx\shouldbefmt\fmtname%
+    \else\immediate\write16{^^J%
+        > !OOPS... warning! - I'm not running under Plain TeX!^^J}\fi}\lookatformat
+
+% (2) %%% verbatim environment for courier new (True Type) fonts %%%%%%%%%%%%%%%%%%%
+% La seguente variante dell'ambiente verbatim implementato nel file 'verbtt.tex'
+% permette l'utilizzo del carattere True Type 'courier new' al posto del font
+% (orrido) typewriter Computer Modern di TeX.
+% Occorre naturalmente avere il file '.tfm' (usato solo in fase di compilazione) ed
+% il corrispettivo file '.ttf' (usato nella visualizzazione su video e nella stampa)
+% installati nel proprio sistema (in PCTeX32 per creare i file '.tfm' si puo' agire
+% tramite menu': 'Settings' --> 'TFM File Names...').
+% La sintassi d'uso di questa variante e' identica alla versione implementata nel
+% file 'verbtt.tex' (si vedano al proposito i commenti in esso contenuti):
+% 
+%    \noindent Qualsiasi testo che si richiede venga formattato da \TeX.
+%    \verbatim
+%    matrix::~matrix() { // distruttore della classe matrix
+%       if(--p->n == 0) { // se il contatore di riferimenti diventa 0
+%          for(int r = 0; r < rows(); r++)
+%             delete p->m[r];
+%          delete p->m;
+%          delete p;
+%       }
+%    } 
+%    @endverbatim
+%    \noindent Ritorno al trattamento di default del testo.
+%
+% Poiche' la tabella dei caratteri dei font True Type non e' completamente uguale a
+% quella dei font Computer Modern, occorre ridefinire alcuni caratteri.
+% Tali ridefinizioni devono essere purtroppo globali ma vengono effettuate dopo
+% avere modificato il codice carattere ('\catcode') di questi caratteri al valore 13
+% (valore che nel formato plain TeX non assumono mai). In questo modo non dovrebbero
+% esserci effetti collaterali su blocchi di testo TeX seguenti l'ambiente verbatim
+% (io almeno non ne ho riscontrato alcuno nella fase di test delle macro...).
+% I valori di default dei '\catcode' vengono ripristinati a fine ambiente verbatim
+% tramite la coppia di macro:
+%
+%    \activecharcodes \recovercatcodes
+%
+% I parametri modificabili in questa implementazione di verbatim sono:
+%
+% - \font\verbatimfont: puo' essere scelto un altro carattere (come il courier new
+%   non grassetto o un qualsiasi altro carattere a spaziatura fissa) o semplicemente
+%   indicata una differente dimensione del font;
+% - L'interlinea '\verbatimbaselineskip' (si veda 'verbtt.tex');
+% - La macro '\newline' (si veda 'verbtt.tex');
+% - La macro '\tabtospaces' puo' essere modificata per tradurre il carattere di
+%   tabulazione in un differente numero di spazi;
+% - I token '\everyverbatimbegin' e '\everyverbatimend' possono essere modificati
+%   (si veda 'verbtt.tex').
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% font utilizzato nel blocco verbatim (valore di default)
+% tale identificatore viene utilizzato piu' in basso per modificare la spaziatura)
+\font\verbatimfont = courinb at 8pt      % (courier new grassetto 8pt; modificabile)
+
+\chardef\other = 12
+\def\makeactive#1{\catcode`#1 = \active\ignorespaces}
+\def\activecharcodes{\do\-\do\"\do\<\do\>\do\{\do\}\do\\\do\|}
+\def\makespecials{\def\do##1{\catcode`##1 = \active}\activecharcodes}
+\def\resetcatcodes{\def\do##1{\catcode`##1 = \the\catcode`##1}\activecharcodes}
+\def\uncatcodespecials{\def\do##1{\catcode`##1 = \other}\dospecials}
+\def\removelastbox{\setbox0 = \lastbox}
+
+% azioni da eseguire ad ogni inizio e fine blocco verbatim (default = nessuna)
+\newtoks\everyverbatimbegin\everyverbatimbegin = {\relax}           % (modificabile)
+\newtoks\everyverbatimend\everyverbatimend = {\relax}               % (modificabile)
+% interlinea del testo verbatim (settata al valore corrente)
+\newskip\verbatimbaselineskip
+\verbatimbaselineskip = \baselineskip plus .1pt minus .1pt          % (modificabile)
+
+% ridefinizione spaziatura (si dimensiona in base al font "\cournew" selezionato)
+\setbox0 = \hbox{\verbatimfont m} % (una lettera qualsiasi)
+\newdimen\spacewd\spacewd = \wd0
+\def\spacekern{\kern\spacewd}
+{\obeyspaces\global\let =\spacekern}
+
+% nota: \hskip0pt permette la visualizzazione delle linee vuote
+\def\newline{\endgraf\noindent\hskip0pt}       % definizione end-line (modificabile)
+\def\tabtospaces{\hskip3\spacewd\relax}   % un tab equivale a 3 spazi (modificabile)
+
+\bgroup          % il gruppo delimita le linee di testo in cui sono attivi ^^M e ^^I
+    \makeactive\^^M \makeactive\^^I %
+    \gdef\setupverbatim{%
+        \makeactive\^^M \let^^M = \newline                       % ridefinizione ^^M
+        \makeactive\^^I \let^^I = \tabtospaces            % conversione tab in spazi
+        \catcode`\@ = 0 \uncatcodespecials\makespecials          % modifica \catcode
+        \parskip = 0pt \baselineskip = \verbatimbaselineskip            % interlinea
+        \obeyspaces\frenchspacing}                             % spaziatura francese
+
+% correzioni dovute a diversa(!) tavola caratteri ttfonts/cmfonts
+% nota 1. nelle linee seguenti vengono ridefiniti in modo GLOBALE alcuni caratteri
+% nel caso della categoria di codice (\catcode) 13. Nei testi TeX tali caratteri
+% appartengono normalmente a categorie diverse dalla 13, quindi cio' non dovrebbe
+% provocare effetti collaterali...
+% nota 2. occorre '\relax', altrimenti:
+%   -- diventa un trattino lungo;
+%   \" provoca 'bad character code error' se seguito da un numero;
+%   \  come sopra, (es. '\0').
+
+    \makeactive\- \gdef-{\char'055\relax}
+    \makeactive\" \gdef"{\char'175\relax}
+    \makeactive\| \gdef|{\char'227\relax}
+    \makeactive\< \gdef<{\char'241\relax}
+    \makeactive\> \gdef>{\char'277\relax}
+    \catcode`\< = 1                         % '<' e' ora il simbolo di inizio gruppo
+    \catcode`\> = 2                         % '>' e' ora il simbolo di fine gruppo
+    \makeactive\{ \gdef{<\char'226\relax>   % nuova def. globale di '{' (codice 13)
+    \makeactive\} \gdef}<\char'224\relax>   % nuova def. globale di '}' (codice 13)
+    \catcode`\@ = 0                         % '@' e' ora il car. escape di TeX
+    \makeactive\\ @gdef\<@char'223@relax>   % nuova def. globale di '\' (codice 13)
+@egroup              % chiusura blocco: ripristino dei valori dei codici di -"<>{}@\
+
+\def\@{@}              % in verbatim il carattere "@" si ottiene con la stringa "@@"
+
+\def\verbatim{\endgraf\bgroup\the\everyverbatimbegin\setupverbatim\verbatimfont}
+\def\endverbatim{\egroup\removelastbox\endgraf\resetcatcodes{\the\everyverbatimend}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

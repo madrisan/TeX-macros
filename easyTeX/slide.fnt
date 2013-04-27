@@ -1,0 +1,39 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% tex.macro.file{                                                                  %
+%     nome              = slide.fnt,                                               %
+%     versione          = 1.01                                                     %
+%     revisione interna = 02a                                                      %
+%     data creazione    = 13/GIU/1998,                                             %
+%     ultima revisione  = 11/LUG/1998,                                             %
+%     tipo di file      = easyTeX,                                                 %
+%     autore            = Davide MADRISAN,                                         %
+%     contenuto         = File con le specifiche dei font del modello slide.       %
+% }                                                                                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% by MDtex!96!98 %%%
+
+\catcode`! = 11                                % privatizzazione delle macro interne
+
+% (1) %%% IMPOSTAZIONI relative ai FONT del modello SLIDE %%%%%%%%%%%%%%%%%%%%%%%%%%
+%  .(1) %%% definizione di "\!titlefonts" ..........................................
+\def\!titlefonts{%      % per poter inserire anche lettere \cal e formule nel titolo
+    \baselineskip = 15pt%
+    \font\!titlefont = cmssbx10 at 12pt%                           % titolo capitolo
+    \!titlefont}
+%
+%  .(2) %%% definizione di "\!sectionfonts" ........................................
+\def\!sectionfonts{%    % per poter inserire anche lettere \cal e formule nel titolo
+    \baselineskip = 15pt%
+    \font\!sectionfont = cmssbx10 at 12pt%                          % titolo sezione
+    \!sectionfont}
+%
+%  .(3) %%% definizione del token "\!fonts" ........................................
+\!fonts = {%
+    \font\!covertitlefont = cmssdc10 at 18pt%
+    \font\!dunhillfont = cmdunh10 at 8pt%
+    \font\!subsectionfont = lcmssi8 at 10pt}                   % titolo sottosezione
+\the\!fonts                                 % caricamento font con valori di default
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\catcode`! = 12            % rimettiamo le cose a posto prima di chiudere baracca...
+
+%%% fine del file Slide.fnt %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% by MDTeX!96!98 %%%
