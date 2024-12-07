@@ -15,3 +15,8 @@ Font Awesome is an Internet's icon library used by millions of designers, develo
 
 See this short [documentation](fontawesome/fontawesome.pdf) (in pdf format), showing the icons provided by
 fonts and how to use them in a *plainTex* (*pdfTex*) document.
+
+<p align="center">
+  <img src="fontawesome/fontawesome-doc-snapshot.png" alt="Font Awesome 5 Documentation Screenshot"/>
+</p>
+<p align="center">Fig. A snapshot of the documentation</p>
