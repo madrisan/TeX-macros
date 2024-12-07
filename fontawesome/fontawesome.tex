@@ -1,0 +1,290 @@
+%%% Support for the Font Awesome
+%%% Project URL: https://fontawesome.com/
+
+%%% Create the pdf document by running:  pdftex fontawesome.tex
+
+\begingroup
+
+% some macro definitions
+
+\font\ninett = cmtt9
+\font\tenit  = cmti10
+\font\tentt = cmtt10
+\font\secfont = cmbx10 scaled \magstep2
+\font\subsecfont = cmbx10
+
+\newcount\sectioncounter
+\global\sectioncounter = 0
+
+\def\section#1{%
+  \global\advance\sectioncounter by 1%
+  \centerline{\secfont \the\sectioncounter.\enspace\hskip.25em #1}%
+  \nobreak\vskip 1cm
+}
+\def\subsection#1{%
+  \bigskip
+  \leftline{\subsecfont #1}%
+  \nobreak\smallskip
+}
+
+\def\fontgroup#1#2#3{%
+  \centerline{%
+    {\tentt\string\fa5\ignorespaces #1\string{n\string}} --- {\tenit font} ``{\tentt #2.tfm}'' (#3)
+  }
+  \bigskip\noindent\ignorespaces
+}
+
+% verbatim macro
+
+\chardef\other = 12
+\def\makeactive#1{\catcode`#1 = \active\ignorespaces}
+\def\uncatcodespecials{\def\do##1{\catcode`##1 = \other}\dospecials}
+\def\removelastbox{\setbox0 = \lastbox}
+
+\def\newline{\endgraf\noindent}
+%{\obeyspaces\gdef\tabtospaces{\ \ \ }}
+
+\newtoks\everyverbatimbegin\everyverbatimbegin = {\relax}
+\newtoks\everyverbatimend\everyverbatimend = {\relax}
+\newskip\verbatimbaselineskip\verbatimbaselineskip = \baselineskip
+\let\verbatimfont = \ninett
+
+\bgroup
+    \makeactive\^^M \makeactive\^^I %
+    \gdef\setupverbatim{%
+        \makeactive\^^M \let^^M = \newline
+        \makeactive\^^I \let^^I = \tabtospaces
+        \catcode`\@ = 0 \uncatcodespecials
+        \parskip = 0pt \baselineskip = \verbatimbaselineskip
+        \obeyspaces\frenchspacing}
+\egroup
+\def\@{@}
+
+\def\verbatim{\endgraf\bgroup\the\everyverbatimbegin\setupverbatim\verbatimfont}
+\def\endverbatim{\egroup\removelastbox\endgraf{\the\everyverbatimend}}
+
+% fonts definitions
+
+\input fontawesome.sty
+
+% font characters in table format
+
+\hsize = 15cm
+\vsize = 30cm
+\hoffset = 2mm
+\voffset = -1cm
+\global\nopagenumbers
+
+\section{Font Awesome 5 Character Tables}
+
+\def\fontcharacters#1{
+   0 & #1{00} & #1{01} & #1{02} & #1{03} & #1{04} & #1{05} & #1{06} & #1{07} & #1{08} & #1{09} & #1{0A} & #1{0B} & #1{0C} & #1{0D} & #1{0E} & #1{0F} \cr
+  10 & #1{10} & #1{11} & #1{12} & #1{13} & #1{14} & #1{15} & #1{16} & #1{17} & #1{18} & #1{19} & #1{1A} & #1{1B} & #1{1C} & #1{1D} & #1{1E} & #1{1F} \cr
+  20 & #1{20} & #1{21} & #1{22} & #1{23} & #1{24} & #1{25} & #1{26} & #1{27} & #1{28} & #1{29} & #1{2A} & #1{2B} & #1{2C} & #1{2D} & #1{2E} & #1{2F} \cr
+  30 & #1{30} & #1{31} & #1{32} & #1{33} & #1{34} & #1{35} & #1{36} & #1{37} & #1{38} & #1{39} & #1{3A} & #1{3B} & #1{3C} & #1{3D} & #1{3E} & #1{3F} \cr
+  40 & #1{40} & #1{41} & #1{42} & #1{43} & #1{44} & #1{45} & #1{46} & #1{47} & #1{48} & #1{49} & #1{4A} & #1{4B} & #1{4C} & #1{4D} & #1{4E} & #1{4F} \cr
+  50 & #1{50} & #1{51} & #1{52} & #1{53} & #1{54} & #1{55} & #1{56} & #1{57} & #1{58} & #1{59} & #1{5A} & #1{5B} & #1{5C} & #1{5D} & #1{5E} & #1{5F} \cr
+  60 & #1{60} & #1{61} & #1{62} & #1{63} & #1{64} & #1{65} & #1{66} & #1{67} & #1{68} & #1{69} & #1{6A} & #1{6B} & #1{6C} & #1{6D} & #1{6E} & #1{6F} \cr
+  70 & #1{70} & #1{71} & #1{72} & #1{73} & #1{74} & #1{75} & #1{76} & #1{77} & #1{78} & #1{79} & #1{7A} & #1{7B} & #1{7C} & #1{7D} & #1{7E} & #1{7F} \cr
+  80 & #1{80} & #1{81} & #1{82} & #1{83} & #1{84} & #1{85} & #1{86} & #1{87} & #1{88} & #1{89} & #1{8A} & #1{8B} & #1{8C} & #1{8D} & #1{8E} & #1{8F} \cr
+  90 & #1{90} & #1{91} & #1{92} & #1{93} & #1{94} & #1{95} & #1{96} & #1{97} & #1{98} & #1{99} & #1{9A} & #1{9B} & #1{9C} & #1{9D} & #1{9E} & #1{9F} \cr
+  A0 & #1{A0} & #1{A1} & #1{A2} & #1{A3} & #1{A4} & #1{A5} & #1{A6} & #1{A7} & #1{A8} & #1{A9} & #1{AA} & #1{AB} & #1{AC} & #1{AD} & #1{AE} & #1{AF} \cr
+  B0 & #1{B0} & #1{B1} & #1{B2} & #1{B3} & #1{B4} & #1{B5} & #1{B6} & #1{B7} & #1{B8} & #1{B9} & #1{BA} & #1{BB} & #1{BC} & #1{BD} & #1{BE} & #1{BF} \cr
+  C0 & #1{C0} & #1{C1} & #1{C2} & #1{C3} & #1{C4} & #1{C5} & #1{C6} & #1{C7} & #1{C8} & #1{C9} & #1{CA} & #1{CB} & #1{CC} & #1{CD} & #1{CE} & #1{CF} \cr
+  D0 & #1{D0} & #1{D1} & #1{D2} & #1{D3} & #1{D4} & #1{D5} & #1{D6} & #1{D7} & #1{D8} & #1{D9} & #1{DA} & #1{DB} & #1{DC} & #1{DD} & #1{DE} & #1{DF} \cr
+  E0 & #1{E0} & #1{E1} & #1{E2} & #1{E3} & #1{E4} & #1{E5} & #1{E6} & #1{E7} & #1{E8} & #1{E9} & #1{EA} & #1{EB} & #1{EC} & #1{ED} & #1{EE} & #1{EF} \cr
+  F0 & #1{F0} & #1{F1} & #1{F2} & #1{F3} & #1{F4} & #1{F5} & #1{F6} & #1{F7} & #1{F8} & #1{F9} & #1{FA} & #1{FB} & #1{FC} & #1{FD} & #1{FE} & #1{FF} \cr
+}
+
+\baselineskip = 12pt
+\tabskip=8pt
+
+\fontgroup{fabrandszeroicon}{brands0}{1}
+$$
+\vbox {
+  \halign {
+    \hfil\tt#  & \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil&
+    \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& #\hfil \cr
+       &\tt 0 &\tt 1 &\tt 2 &\tt 3 &\tt 4 &\tt 5 &\tt 6 &\tt 7 &\tt 8 &\tt 9 &\tt A &\tt B &\tt C &\tt D &\tt E &\tt F \cr
+    \noalign { \smallskip }
+    \fontcharacters{\fabrandszeroicon}
+  }
+}
+$$
+\bigskip
+
+\fontgroup{fabrandsoneicon}{brands1}{2}
+$$
+\vbox {
+  \halign {
+    \hfil\tt#  & \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil&
+    \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& #\hfil \cr
+       &\tt 0 &\tt 1 &\tt 2 &\tt 3 &\tt 4 &\tt 5 &\tt 6 &\tt 7 &\tt 8 &\tt 9 &\tt A &\tt B &\tt C &\tt D &\tt E &\tt F \cr
+    \noalign { \smallskip }
+    \fontcharacters{\fabrandsoneicon}
+  }
+}
+$$
+\bigskip
+
+\fontgroup{fasolidzeroicon}{free0solid}{1}
+$$
+\vbox {
+  \halign {
+    \hfil\tt#  & \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil&
+    \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& #\hfil \cr
+       &\tt 0 &\tt 1 &\tt 2 &\tt 3 &\tt 4 &\tt 5 &\tt 6 &\tt 7 &\tt 8 &\tt 9 &\tt A &\tt B &\tt C &\tt D &\tt E &\tt F \cr
+    \noalign { \smallskip }
+    \fontcharacters{\fasolidzeroicon}
+  }
+}
+$$
+
+\vfill\eject
+
+\fontgroup{fasolidioneicon}{free1solid}{2}
+$$
+\vbox {
+  \halign {
+    \hfil\tt#  & \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil&
+    \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& #\hfil \cr
+       &\tt 0 &\tt 1 &\tt 2 &\tt 3 &\tt 4 &\tt 5 &\tt 6 &\tt 7 &\tt 8 &\tt 9 &\tt A &\tt B &\tt C &\tt D &\tt E &\tt F \cr
+    \noalign { \smallskip }
+    \fontcharacters{\fasolidoneicon}
+  }
+}
+$$
+\bigskip
+
+\fontgroup{fasolidtwoicon}{free2solid}{3}
+$$
+\vbox {
+  \halign {
+    \hfil\tt#  & \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil&
+    \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& #\hfil \cr
+       &\tt 0 &\tt 1 &\tt 2 &\tt 3 &\tt 4 &\tt 5 &\tt 6 &\tt 7 &\tt 8 &\tt 9 &\tt A &\tt B &\tt C &\tt D &\tt E &\tt F \cr
+    \noalign { \smallskip }
+    \fontcharacters{\fasolidtwoicon}
+  }
+}
+$$
+\bigskip
+
+\fontgroup{fasolidthreeicon}{free3solid}{4}
+$$
+\vbox {
+  \halign {
+    \hfil\tt#  & \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil&
+    \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& #\hfil \cr
+       &\tt 0 &\tt 1 &\tt 2 &\tt 3 &\tt 4 &\tt 5 &\tt 6 &\tt 7 &\tt 8 &\tt 9 &\tt A &\tt B &\tt C &\tt D &\tt E &\tt F \cr
+    \noalign { \smallskip }
+    \fontcharacters{\fasolidthreeicon}
+  }
+}
+$$
+
+\vfill\eject
+
+\fontgroup{faregularzeroicon}{free0regular}{1}
+$$
+\vbox {
+  \halign {
+    \hfil\tt#  & \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil&
+    \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& #\hfil \cr
+       &\tt 0 &\tt 1 &\tt 2 &\tt 3 &\tt 4 &\tt 5 &\tt 6 &\tt 7 &\tt 8 &\tt 9 &\tt A &\tt B &\tt C &\tt D &\tt E &\tt F \cr
+    \noalign { \smallskip }
+    \fontcharacters{\faregularzeroicon}
+  }
+}
+$$
+\bigskip
+
+\fontgroup{faregularoneicon}{free1regular}{2}
+$$
+\vbox {
+  \halign {
+    \hfil\tt#  & \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil&
+    \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& #\hfil \cr
+       &\tt 0 &\tt 1 &\tt 2 &\tt 3 &\tt 4 &\tt 5 &\tt 6 &\tt 7 &\tt 8 &\tt 9 &\tt A &\tt B &\tt C &\tt D &\tt E &\tt F \cr
+    \noalign { \smallskip }
+    \fontcharacters{\faregularoneicon}
+  }
+}
+$$
+\bigskip
+
+\fontgroup{faregulartwoicon}{free2regular}{3}
+$$
+\vbox {
+  \halign {
+    \hfil\tt#  & \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil&
+    \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& #\hfil \cr
+       &\tt 0 &\tt 1 &\tt 2 &\tt 3 &\tt 4 &\tt 5 &\tt 6 &\tt 7 &\tt 8 &\tt 9 &\tt A &\tt B &\tt C &\tt D &\tt E &\tt F \cr
+    \noalign { \smallskip }
+    \fontcharacters{\faregulartwoicon}
+  }
+}
+$$
+
+\vfill\eject
+
+\fontgroup{faregularthreeicon}{free3regular}{4}
+$$
+\vbox {
+  \halign {
+    \hfil\tt#  & \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil&
+    \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& \hfil#\hfil& #\hfil \cr
+       &\tt 0 &\tt 1 &\tt 2 &\tt 3 &\tt 4 &\tt 5 &\tt 6 &\tt 7 &\tt 8 &\tt 9 &\tt A &\tt B &\tt C &\tt D &\tt E &\tt F \cr
+    \noalign { \smallskip }
+    \fontcharacters{\faregularthreeicon}
+  }
+}
+$$
+\vskip 2cm
+
+\section{plain\TeX{} macros}
+
+\subsection{Font fa5brands}
+\verbatim
+   \font\fabrandszero = fa5brands0
+   \font\fabrandsone = fa5brands1
+   \def\fabrandszeroicon#1{{\fabrandszero\char"#1}}%
+   \def\fabrandsoneicon#1{{\fabrandsone\char"#1}}%
+@endverbatim
+
+\subsection{Font fa5freesolid}
+\verbatim
+   \font\fasolidzero = fa5free0solid
+   \font\fasolidone = fa5free1solid
+   \font\fasolidtwo = fa5free2solid
+   \font\fasolidthree = fa5free3solid
+   \def\fasolidzeroicon#1{{\fasolidzero\char"#1}}%
+   \def\fasolidoneicon#1{{\fasolidone\char"#1}}%
+   \def\fasolidtwoicon#1{{\fasolidtwo\char"#1}}%
+   \def\fasolidthreeicon#1{{\fasolidthree\char"#1}}%
+@endverbatim
+
+\subsection{Font fa5freeregular}
+\verbatim
+   \font\faregularzero = fa5free0regular
+   \font\faregularone = fa5free1regular
+   \font\faregulartwo = fa5free2regular
+   \font\faregularthree = fa5free3regular
+   \def\faregularzeroicon#1{{\faregularzero\char"#1}}%
+   \def\faregularoneicon#1{{\faregularone\char"#1}}%
+   \def\faregulartwoicon#1{{\faregulartwo\char"#1}}%
+   \def\faregularthreeicon#1{{\faregularthree\char"#1}}%
+@endverbatim
+
+\subsection{Example}
+\verbatim
+   \def\fafiveHandshake{{\fasolidoneicon{B1}}}
+   \fafiveHandshake
+@endverbatim
+
+\bigskip
+\indent \fasolidoneicon{B1}
+
+\endgroup
+
+\vfill\supereject\end
