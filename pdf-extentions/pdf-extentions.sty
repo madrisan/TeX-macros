@@ -6,17 +6,17 @@
     \ifnum\pdfoutput>0 \pdfmodetrue\fi
 \fi
 
-%%% Colour support
-
 \ifpdfmode
+
+%%% Colours
 
 \def\colorblack{0 g 0 G}
 %\def\colorred  {1 0 0 rg 1 0 0 RG}
 %\def\colorgreen{0 1 0 rg 0 1 0 RG}
-%\def\colorblue {0 0 1 rg 0 0 1 RG}
-\def\colordarkgreen{0   0.5 0    rg 0   0.5 0   RG}
-\def\colorlightgray{0.6 0.6 0.6  rg 0.6 0.6 0.6 RG}
-\def\colordarkgray{0.3 0.3 0.3  rg 0.3 0.3 0.3 RG}
+\def\colorblue {0 0 1 rg 0 0 1 RG}
+\def\colordarkgreen{0 0.5 0 rg 0 0.5 0 RG}
+\def\colorlightgray{0.6 0.6 0.6 rg 0.6 0.6 0.6 RG}
+\def\colordarkgray{0.3 0.3 0.3 rg 0.3 0.3 0.3 RG}
 
 \ifx\pdfcolorstack\undefined
     \def\pdfcolorstackpush{\pdfliteral{\currentcolor}}
@@ -32,7 +32,7 @@
 \def\colorblack{gray 0}
 %\def\colorred  {rgb 1 0 0}
 %\def\colorgreen{rgb 0 1 0}
-%\def\colorblue {rgb 0 0 1}
+\def\colorblue {rgb 0 0 1}
 \def\colordarkgreen{rgb 0   0.  0}
 \def\colorlightgray{rgb 0.6 0.6 0.6}
 \def\colordarkgray{rgb 0.3 0.3 0.3}
@@ -51,10 +51,11 @@
 
 \let\currentcolor = \colorblack
 
+%%% URL links: \pdfurl
+%%% Usage: \url{www.qwant.com}
+%%%        --> [https://www.qwant.com](https://www.qwant.com)
 
-%%% URL support
-
-\def\url#1{%
+\def\pdfurl#1{%
     % turn off the special meaning of ~ inside \url{}.
     \begingroup\catcode`\~=12\catcode`\_=12\relax
     \ifpdfmode
@@ -77,11 +78,15 @@
     \fi
     \endgroup}
 
+%%% Mail address: \pdfmail
+%%% Usage: \pdfmail
+%%%        (\mymailaddr need to be customized)
+
 \def\mymailaddr{%
    {\tt a\kern-.0pt{.}\kern-.0pt{user}%
     \lower.3ex\hbox{@}mailprovider\kern-.0pt{.}\kern-.0pt{com}}}
 
-\def\email{
+\def\pdfmail{
     % turn off the special meaning of ~ inside \url{}.
     \begingroup\catcode`\~=12\catcode`\_=12\relax
     \ifpdfmode
@@ -99,5 +104,65 @@
         \pdfendlink{}%
     \else
         {\mymailaddr}%
+    \fi
+    \endgroup}
+
+%%% References to different parts of the the current document
+%%% Usage:
+%%%  - \pdfnextpage{Goto to next page}
+%%%  - \pdfpreviouspage{Goto to previous page}
+
+\def\pdfxref[#1]#2{%
+    % turn off the special meaning of ~ and _ inside \pdfxref{}.
+    \begingroup\catcode`\~=12\catcode`\_=12\relax%
+    \ifpdfmode%
+        \pdfstartlink user{
+            /Subtype /Link
+            % w/o this you get an ugly box around the URL.
+            /Border [0 0 0]  % radius, radius, line thickness
+            /A << /Type /Action /S /Named /N #1 >>
+        }%
+        {#2}%
+        \pdfendlink{}
+    \else%
+        {#2}%
+    \fi%
+    \endgroup}
+
+\def\pdfnextpage#1{\pdfxref[/NextPage]{#1}}
+\def\pdfpreviouspage#1{\pdfxref[/PrevPage]{#1}}
+
+%%% Links to labelled points in the current document: \pdfref
+%%% Usage:
+%%%  - \pdflabel{sec:foo}             % mark the destination, once
+%%%  - \pdfref{sec:foo}{see section}  % link to it, anywhere after or before
+%%%
+%%% Example:
+%%%   \pdflabel{intro}
+%%%   \section{Introduction}
+%%%   ...
+%%%   As explained in the \pdfref{intro}{introduction}, ...
+%%%        --> As explained in the introduction, ...
+%%%            ("introduction" is shown in blue: a clickable link to \S 1)
+
+\def\pdflabel#1{%
+    \ifpdfmode
+        \pdfdest name{#1} xyz
+    \fi}
+
+\def\pdfref#1#2{%
+    % turn off the special meaning of ~ and _ inside \pdfref{}.
+    \begingroup\catcode`\~=12\catcode`\_=12\relax
+    \ifpdfmode
+        \pdfstartlink user{
+            /Subtype /Link
+            % w/o this you get an ugly box around the reference.
+            /Border [0 0 0]  % radius, radius, line thickness
+            /A << /Type /Action /S /GoTo /D (#1) >>
+        }%
+        {\color{blue}#2}%
+        \pdfendlink{}%
+    \else
+	{{\it\color{blue}#2}}%
     \fi
     \endgroup}
