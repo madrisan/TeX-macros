@@ -80,13 +80,13 @@
 
 %%% Mail address: \pdfmail
 %%% Usage: \pdfmail
-%%%        (\mymailaddr need to be customized)
+%%%        (\mymailaddr needs to be customized)
 
 \def\mymailaddr{%
    {\tt a\kern-.0pt{.}\kern-.0pt{user}%
     \lower.3ex\hbox{@}mailprovider\kern-.0pt{.}\kern-.0pt{com}}}
 
-\def\pdfmail{
+\def\pdfmail{%
     % turn off the special meaning of ~ inside \url{}.
     \begingroup\catcode`\~=12\catcode`\_=12\relax
     \ifpdfmode
@@ -107,10 +107,10 @@
     \fi
     \endgroup}
 
-%%% References to different parts of the the current document
+%%% References to different parts of the current document
 %%% Usage:
-%%%  - \pdfnextpage{Goto to next page}
-%%%  - \pdfpreviouspage{Goto to previous page}
+%%%  - \pdfnextpage{Go to the next page}
+%%%  - \pdfpreviouspage{Go to the previous page}
 
 \def\pdfxref[#1]#2{%
     % turn off the special meaning of ~ and _ inside \pdfxref{}.
@@ -160,7 +160,7 @@
             /Border [0 0 0]  % radius, radius, line thickness
             /A << /Type /Action /S /GoTo /D (#1) >>
         }%
-        {\color{blue}#2}%
+        \color{blue}#2%
         \pdfendlink{}%
     \else
 	{{\it\color{blue}#2}}%
